@@ -1,0 +1,33 @@
+@import 'variables';
+body {
+    margin: 0;
+    padding: 0;
+   
+    font-family: 'Plus Jakarta Sans', 'Plus Jakarta Sans Fallback', Helvetica, Arial, sans-serif;
+    line-height: 1.5;
+    color: inherit;
+    background-color: transparent;
+}
+$primary-color: #ff0000;
+$background-color: #f0f5f9;
+$color-light: #ffffff;
+$box-shadow-default: 0 2px 6px rgba(37, 83, 185, 0.1);
+
+.main_background {
+  background-color: $background-color;
+  display: flex;
+  min-height: 100vh;
+  width: 100%;
+  padding: 20px;
+}
+
+.sidebarBox {
+  height: calc(100% - 40px);
+  background-color: #ffffff;
+  width: 274px;
+  top: 20px;
+  left: 20px;
+  position: fixed;
+  box-shadow: $box-shadow-default;
+  border-radius: 10px;
+}
