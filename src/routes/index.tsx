@@ -1,24 +1,25 @@
 // src/routes/index.tsx
 import React from "react";
 import { useRoutes } from "react-router-dom";
-
-// Import các page component
-// import HomePage from "../pages/HomePage";
-// import ProductPage from "../pages/ProductPage";
-// import LoginPage from "../pages/LoginPage";
+import AuthLayout from "../layouts/AuthLayout";
+import MainLayout from "../layouts/MainLayout";
+import HomePage from "../pages/HomePage";
+import LoginPage from "../pages/LoginPage";
+import ProductsPage from "../pages/ProductsPage";
 
 const routes = [
   {
-    path: "/",
-    element: <h1>Trang chủ</h1>, // Thay bằng <HomePage /> sau này
+    element: <MainLayout />,
+    children: [
+      { path: "/", element: <HomePage /> },
+      { path: "/products", element: <ProductsPage /> },
+    ],
   },
   {
-    path: "/login",
-    element: <h1>Đăng nhập</h1>, // Thay bằng <LoginPage /> sau này
-  },
-  {
-    path: "/products",
-    element: <h1>Danh sách sản phẩm</h1>, // Thay bằng <ProductPage /> sau này
+    element: <AuthLayout />,
+    children: [
+      { path: "/login", element: <LoginPage /> },
+    ],
   },
 ];
 
