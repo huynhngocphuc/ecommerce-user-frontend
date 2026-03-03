@@ -1,24 +1,20 @@
 // src/routes/index.tsx
 import React from "react";
 import { useRoutes } from "react-router-dom";
-import AuthLayout from "../layouts/AuthLayout";
-import MainLayout from "../layouts/MainLayout";
-import HomePage from "../pages/HomePage";
-import LoginPage from "../pages/LoginPage";
-import ProductsPage from "../pages/ProductsPage";
+
 
 const routes = [
   {
-    element: <MainLayout />,
+    element: <p>a</p>,
     children: [
-      { path: "/", element: <HomePage /> },
-      { path: "/products", element: <ProductsPage /> },
+      { path: "/", element: <p>Home</p> },
+      { path: "/products", element: <p>Products</p> },
     ],
   },
   {
-    element: <AuthLayout />,
+    element: <p>b</p>,
     children: [
-      { path: "/login", element: <LoginPage /> },
+      { path: "/login", element: <p>Login</p> },
     ],
   },
 ];

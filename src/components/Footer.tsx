@@ -5,7 +5,7 @@ const Footer: React.FC = () => {
   return (
     <Box component="footer" sx={{ p: 2, textAlign: 'center' }}>
       <Typography variant="body2" color="textSecondary">
-        © 2023 E-commerce Admin
+        © 2026 PeterHuynh
       </Typography>
     </Box>
   );
