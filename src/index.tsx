@@ -13,7 +13,7 @@ const root = ReactDOM.createRoot(document.getElementById("root") as HTMLElement)
 root.render(
   <React.StrictMode>
     <Provider store={store}>
-      <ThemeProvider theme={{ lightTheme }}>
+      <ThemeProvider theme={lightTheme}>
         <BrowserRouter>
           <App />
         </BrowserRouter>
