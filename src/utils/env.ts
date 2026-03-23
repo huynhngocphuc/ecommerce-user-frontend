@@ -7,4 +7,12 @@ if (!ENV.API_BASE_URL) {
   throw new Error('Missing REACT_APP_API_BASE_URL in environment variables.');
 }
 
+export const getApiBaseUrl = (): string => {
+  const baseUrl = process.env.REACT_APP_API_BASE_URL;
+  if (!baseUrl) {
+    throw new Error('REACT_APP_API_BASE_URL is not defined. Please check your .env file.');
+  }
+  return baseUrl;
+};
+
 export default ENV;

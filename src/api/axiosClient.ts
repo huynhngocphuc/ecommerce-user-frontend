@@ -20,4 +20,20 @@ axiosClient.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
+// Handle 401 responses by clearing token and triggering logout
+axiosClient.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      // Clear token from localStorage and trigger logout
+      localStorage.removeItem('token');
+      localStorage.removeItem('userSession');
+      // Dispatch logout action could be done here via store if needed
+      // For now, just clear storage and let the app handle re-authentication
+      window.dispatchEvent(new Event('logout'));
+    }
+    return Promise.reject(error);
+  }
+);
+
 export default axiosClient;

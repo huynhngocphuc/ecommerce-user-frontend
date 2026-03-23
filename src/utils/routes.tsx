@@ -1,25 +1,18 @@
-// src/routes/index.tsx
-import React from "react";
-import { useRoutes } from "react-router-dom";
+// Route path constants
+export const ROUTES = {
+  HOME: '/',
+  LOGIN: '/login',
+  PRODUCTS: '/products',
+  PRODUCT_DETAIL: '/products/:id',
+  DASHBOARD: '/dashboard',
+};
 
+// Define route constants for navigation
+export const ROUTE_PATHS = {
+  HOME: ROUTES.HOME,
+  LOGIN: ROUTES.LOGIN,
+  PRODUCTS: ROUTES.PRODUCTS,
+  PRODUCT_DETAIL: (id: string | number) => `/products/${id}`,
+  DASHBOARD: ROUTES.DASHBOARD,
+};
 
-const routes = [
-  {
-    element: <p>a</p>,
-    children: [
-      { path: "/", element: <p>Home</p> },
-      { path: "/products", element: <p>Products</p> },
-    ],
-  },
-  {
-    element: <p>b</p>,
-    children: [
-      { path: "/login", element: <p>Login</p> },
-    ],
-  },
-];
-
-export default function AppRoutes() {
-  const element = useRoutes(routes);
-  return element;
-}
