@@ -1,4 +1,4 @@
-// src/features/products/productSlice.ts
+// src/redux/products/productSlice.ts
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { getProducts } from '../../api/productsApi';
 import { Product } from './type';

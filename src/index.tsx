@@ -3,7 +3,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App";
 import "./assets/styles/main.scss"; // Import the main SCSS file
-import { lightTheme } from "./theme";
+import { lightTheme } from "./utils/theme";
 
 import { Provider } from "react-redux";
 import { store } from "./redux/store";

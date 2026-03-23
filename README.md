@@ -44,3 +44,17 @@ You don’t have to ever use `eject`. The curated feature set is suitable for sm
 You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
 
 To learn React, check out the [React documentation](https://reactjs.org/).
+
+## Environment Configuration
+
+This project uses Create React App environment files:
+
+- `.env.development` for `npm start`
+- `.env.production` for `npm run build`
+
+Required variables:
+
+- `REACT_APP_API_BASE_URL`
+- `REACT_APP_ENV_NAME`
+
+Environment values are read via [src/utils/env.ts](src/utils/env.ts).

@@ -1,6 +1,6 @@
 // src/api/authApi.ts
 import axiosClient from './axiosClient';
-import { User } from '../features/auth/type';
+import { User } from '../redux/auth/type';
 
 interface LoginCredentials {
   email: string;

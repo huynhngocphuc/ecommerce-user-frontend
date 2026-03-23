@@ -1,4 +1,4 @@
-// src/features/auth/authSlice.ts
+// src/redux/auth/authSlice.ts
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { loginApi } from '../../api/authApi';
 import { User } from './type';
