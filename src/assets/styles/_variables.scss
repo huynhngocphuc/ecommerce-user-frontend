@@ -1,4 +1,21 @@
-$primary-color: #0085db;
-$background-color: #f0f5f9;
-$color-light: #ffffff;
-$box-shadow-default: 0 2px 6px rgba(37, 83, 185, 0.1);
+$theme-heading-font: 'DM Serif Display', 'Times New Roman', Times, serif;
+$theme-body-font: 'Söhne', 'Suisse Int\'l', 'Suisse', Inter, 'Segoe UI', Arial, sans-serif;
+
+$theme-dark-100: #3A0519;
+$theme-dark-200: #670D2F;
+$theme-dark-300: #850E35;
+$theme-dark-400: #A53860;
+$theme-dark-500: #EE6983;
+$theme-dark-600: #EF88AD;
+
+$theme-light-100: #FCF8F8;
+$theme-light-200: #FBEFEF;
+$theme-light-300: #F9DFDF;
+$theme-light-400: #FEEAC9;
+$theme-light-500: #FFCDC9;
+$theme-light-600: #F5AFAF;
+
+$primary-color: $theme-light-500;
+$background-color: $theme-light-100;
+$color-light: $theme-light-100;
+$box-shadow-default: 0 2px 6px rgba(58, 5, 25, 0.12);

@@ -11,7 +11,7 @@ const HomePage: React.FC = () => {
     <Container maxWidth="md" sx={{ py: 8, textAlign: 'center' }}>
       <Box sx={{ mb: 4 }}>
         <Typography variant="h3" component="h1" gutterBottom>
-          Welcome to Shop Electronic
+          Welcome to Shop Clothing
         </Typography>
         <Typography variant="h6" color="textSecondary" gutterBottom>
           Your one-stop destination for quality electronics
