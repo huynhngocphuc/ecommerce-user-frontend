@@ -4,9 +4,13 @@ import { useAuth } from './useAuth';
 
 export const useProtectedRoute = () => {
   const navigate = useNavigate();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, isLoading, sessionStatus } = useAuth();
 
   const checkAuthentication = (redirectTo: string = '/login') => {
+    if (sessionStatus === 'unknown' || isLoading) {
+      return false;
+    }
+
     if (!isAuthenticated) {
       navigate(redirectTo);
       return false;
@@ -14,5 +18,10 @@ export const useProtectedRoute = () => {
     return true;
   };
 
-  return { checkAuthentication, isAuthenticated };
+  return {
+    checkAuthentication,
+    isAuthenticated,
+    isLoading,
+    sessionStatus,
+  };
 };

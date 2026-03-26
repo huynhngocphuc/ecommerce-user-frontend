@@ -13,7 +13,7 @@ const ProductsPage: React.FC = () => {
 
   useEffect(() => {
     if (!checkAuthentication()) return;
-    fetchProducts();
+    // fetchProducts();
   }, [checkAuthentication, fetchProducts]);
 
   if (!checkAuthentication()) {

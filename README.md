@@ -58,3 +58,24 @@ Required variables:
 - `REACT_APP_ENV_NAME`
 
 Environment values are read via [src/utils/env.ts](src/utils/env.ts).
+
+## Auth Session Migration Notes
+
+- Frontend auth no longer stores access tokens in `localStorage`.
+- Session state is derived from backend session routes and browser-managed cookies.
+- Auth API contract routes used by the frontend:
+	- `POST /register`
+	- `POST /login`
+	- `GET /verify`
+	- `GET /profile`
+	- `POST /logout`
+	- `POST /refresh`
+- Axios is configured with credentialed requests (`withCredentials: true`).
+- Production/non-local API configuration requires HTTPS; insecure API base URLs are blocked.
+
+
+------------------Speckit--------------------
+/speckit.specify
+/speckit.plan
+/speckit.tasks
+/speckit.implement

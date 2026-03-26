@@ -5,18 +5,22 @@ export interface User {
   avatarUrl?: string;
 }
 
+export type SessionStatus = 'unknown' | 'authenticated' | 'unauthenticated';
+
 export interface UserSession {
-  token: string;
-  isAuthenticated: boolean;
+  status: SessionStatus;
+  isRefreshing: boolean;
   userProfile: User | null;
+  lastVerifiedAt: string | null;
 }
 
 export interface AuthState {
-  authenticating: boolean;
-  authenticated: boolean;
-  isAuthenticated: boolean;
-  token: string | null;
-  userProfile: User | null;
+  user: User | null;
+  sessionStatus: SessionStatus;
+  isLoading: boolean;
+  isRefreshing: boolean;
+  lastVerifiedAt: string | null;
+  failureReason: string | null;
   error: string | null;
 }
 

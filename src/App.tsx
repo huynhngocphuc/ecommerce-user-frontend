@@ -12,8 +12,12 @@ import { useAuth } from './hooks/useAuth';
 import { createAppTheme, resolveInitialThemeMode, resolveSystemPreferredMode } from './utils/theme';
 
 const App: React.FC = () => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, isLoading, sessionStatus, bootstrapSession } = useAuth();
   const [themeMode, setThemeMode] = React.useState(resolveInitialThemeMode);
+
+  React.useEffect(() => {
+    bootstrapSession();
+  }, [bootstrapSession]);
 
   React.useEffect(() => {
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
@@ -33,6 +37,15 @@ const App: React.FC = () => {
   }, [themeMode]);
 
   const appTheme = React.useMemo(() => createAppTheme(themeMode), [themeMode]);
+  const isAuthChecking = sessionStatus === 'unknown' || isLoading;
+
+  const protectedRouteElement = (element: React.ReactElement) => {
+    if (isAuthChecking) {
+      return <Box sx={{ p: 3 }}>Checking session...</Box>;
+    }
+
+    return isAuthenticated ? element : <Navigate to={ROUTES.LOGIN} />;
+  };
 
   return (
     <ThemeProvider theme={appTheme}>
@@ -42,16 +55,19 @@ const App: React.FC = () => {
           <Routes>
             {/* Public routes */}
             <Route path={ROUTES.HOME} element={<HomePage />} />
-            <Route path={ROUTES.LOGIN} element={<LoginPage />} />
+            <Route
+              path={ROUTES.LOGIN}
+              element={isAuthenticated ? <Navigate to={ROUTES.PRODUCTS} /> : <LoginPage />}
+            />
 
             {/* Protected routes */}
             <Route
               path={ROUTES.PRODUCTS}
-              element={isAuthenticated ? <ProductsPage /> : <Navigate to={ROUTES.LOGIN} />}
+              element={protectedRouteElement(<ProductsPage />)}
             />
             <Route
               path={ROUTES.PRODUCT_DETAIL}
-              element={isAuthenticated ? <ProductDetailPage /> : <Navigate to={ROUTES.LOGIN} />}
+              element={protectedRouteElement(<ProductDetailPage />)}
             />
 
             {/* Catch all - redirect to home */}
