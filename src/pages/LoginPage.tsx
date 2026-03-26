@@ -8,14 +8,14 @@ import { ROUTES } from '../utils/routes';
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const { login, isLoading, error } = useAuth();
+  const { login, isLoading, isRefreshing, error } = useAuth();
   const navigate = useNavigate();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
       await login(email, password);
-      navigate(ROUTES.PRODUCTS);
+      // navigate(ROUTES.PRODUCTS);
     } catch (err) {
       console.error('Login failed:', err);
     }
@@ -53,9 +53,9 @@ const LoginPage: React.FC = () => {
           fullWidth
           variant="contained"
           sx={{ mt: 3 }}
-          disabled={isLoading}
+          disabled={isLoading || isRefreshing}
         >
-          {isLoading ? 'Logging in...' : 'Login'}
+          {isLoading || isRefreshing ? 'Logging in...' : 'Login'}
         </Button>
       </Box>
     </Container>

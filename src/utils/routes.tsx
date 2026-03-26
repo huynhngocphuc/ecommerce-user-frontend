@@ -7,6 +7,15 @@ export const ROUTES = {
   DASHBOARD: '/dashboard',
 };
 
+export const AUTH_API_ROUTES = {
+  REGISTER: '/auth/register',
+  LOGIN: '/auth/login',
+  VERIFY: '/auth/verify',
+  PROFILE: '/auth/profile',
+  LOGOUT: '/auth/logout',
+  REFRESH: '/auth/refresh',
+};
+
 // Define route constants for navigation
 export const ROUTE_PATHS = {
   HOME: ROUTES.HOME,
