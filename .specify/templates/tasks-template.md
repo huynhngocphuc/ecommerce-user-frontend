@@ -12,6 +12,10 @@ description: "Task list template for feature implementation"
 
 **Organization**: Tasks are grouped by user story to enable independent implementation and testing of each story.
 
+**Constitution Alignment**: Tasks MUST preserve requirement-to-task traceability,
+respect additive/backward-safe constraints, and include explicit validation tasks for
+source-of-truth alignment.
+
 ## Format: `[ID] [P?] [Story] Description`
 
 - **[P]**: Can run in parallel (different files, no dependencies)
@@ -183,6 +187,7 @@ Examples of foundational tasks (adjust based on your project):
 - Services before endpoints
 - Core implementation before integration
 - Story complete before moving to next priority
+- Requirement coverage check completed before marking story done
 
 ### Parallel Opportunities
 
@@ -249,3 +254,4 @@ With multiple developers:
 - Commit after each task or logical group
 - Stop at any checkpoint to validate story independently
 - Avoid: vague tasks, same file conflicts, cross-story dependencies that break independence
+- Include at least one explicit validation task that checks source-of-truth alignment when external source documents are used

@@ -22,7 +22,7 @@ const Header: React.FC = () => {
           sx={{ flexGrow: 1, cursor: 'pointer' }}
           onClick={() => navigate(ROUTES.HOME)}
         >
-          Shop Electronic
+          Shop Clothing
         </Typography>
         <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
           {isAuthenticated ? (

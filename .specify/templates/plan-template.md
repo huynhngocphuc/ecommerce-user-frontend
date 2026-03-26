@@ -31,7 +31,13 @@
 
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-[Gates determined based on constitution file]
+- Source-of-Truth First: Are authoritative source documents identified and aligned?
+- Additive & Backward-Safe Change: Are removals/renames justified with migration notes?
+- Testable Specifications: Are requirements and success criteria measurable/testable?
+- Styling System Consistency: Are approved styling layers/tokens used as constraints?
+- Incremental Delivery & Traceability: Are stories independently testable with clear mapping?
+
+Record gate status as PASS/FAIL with notes for each principle.
 
 ## Project Structure
 

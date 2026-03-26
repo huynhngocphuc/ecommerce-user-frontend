@@ -80,6 +80,8 @@
 <!--
   ACTION REQUIRED: The content in this section represents placeholders.
   Fill them out with the right functional requirements.
+  Include explicit source-of-truth references for externally defined rules/tokens/contracts.
+  Mark additive-preservation constraints when existing behavior/tokens must not be removed.
 -->
 
 ### Functional Requirements
@@ -89,6 +91,12 @@
 - **FR-003**: Users MUST be able to [key interaction, e.g., "reset their password"]
 - **FR-004**: System MUST [data requirement, e.g., "persist user preferences"]
 - **FR-005**: System MUST [behavior, e.g., "log all security events"]
+
+*Constitution alignment checks for this section:*
+
+- Requirements MUST be testable and unambiguous.
+- Breaking or removal changes MUST include migration/compatibility notes.
+- Requirements that depend on source documents MUST name those sources.
 
 *Example of marking unclear requirements:*
 
@@ -105,6 +113,7 @@
 <!--
   ACTION REQUIRED: Define measurable success criteria.
   These must be technology-agnostic and measurable.
+  Avoid subjective language unless converted into explicit review criteria.
 -->
 
 ### Measurable Outcomes
