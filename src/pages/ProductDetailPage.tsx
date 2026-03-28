@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Box, Container, Typography, CircularProgress, Alert, Button } from '@mui/material';
 import { useProtectedRoute } from '../hooks/useProtectedRoute';
+import { useProducts } from '../hooks/useProducts';
 import { getProductById } from '../api/productsApi';
 import { Product } from '../redux/products/type';
 import { ROUTES } from '../utils/routes';
@@ -11,6 +12,7 @@ const ProductDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { checkAuthentication } = useProtectedRoute();
+  const { addToCart } = useProducts();
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -82,7 +84,15 @@ const ProductDetailPage: React.FC = () => {
               {product.description}
             </Typography>
           )}
-          <Button variant="contained" size="large">
+          <Button
+            variant="contained"
+            size="large"
+            onClick={() => {
+              if (product) {
+                addToCart(product);
+              }
+            }}
+          >
             Add to Cart
           </Button>
         </Box>

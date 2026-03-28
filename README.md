@@ -73,6 +73,15 @@ Environment values are read via [src/utils/env.ts](src/utils/env.ts).
 - Axios is configured with credentialed requests (`withCredentials: true`).
 - Production/non-local API configuration requires HTTPS; insecure API base URLs are blocked.
 
+## Header Feature Notes
+
+- Header now supports desktop and mobile layouts with a sticky top position.
+- Desktop navigation includes: Home, Shop, New Arrivals, Sale.
+- Mobile navigation switches to a hamburger drawer for viewports below 768px.
+- Right-side actions include Search, Cart (with quantity badge), and User Account.
+- Cart badge is reactive to Redux cart state, hides at zero, and displays `99+` for overflow.
+- Hover interactions are subtle on desktop and suppressed for coarse pointer/touch devices.
+
 
 ------------------Speckit--------------------
 /speckit.specify

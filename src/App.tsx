@@ -5,8 +5,10 @@ import Header from './components/layout/Header';
 import Footer from './components/ui/Footer';
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
+import NewArrivalsPage from './pages/NewArrivalsPage';
 import ProductsPage from './pages/ProductsPage';
 import ProductDetailPage from './pages/ProductDetailPage';
+import SalePage from './pages/SalePage';
 import { ROUTES } from './utils/routes';
 import { useAuth } from './hooks/useAuth';
 import { createAppTheme, resolveInitialThemeMode, resolveSystemPreferredMode } from './utils/theme';
@@ -51,7 +53,7 @@ const App: React.FC = () => {
     <ThemeProvider theme={appTheme}>
       <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
         <Header />
-        <Box sx={{ flex: 1 }}>
+        <Box component="main" sx={{ flex: 1, minWidth: 0 }}>
           <Routes>
             {/* Public routes */}
             <Route path={ROUTES.HOME} element={<HomePage />} />
@@ -59,6 +61,8 @@ const App: React.FC = () => {
               path={ROUTES.LOGIN}
               element={isAuthenticated ? <Navigate to={ROUTES.PRODUCTS} /> : <LoginPage />}
             />
+            <Route path={ROUTES.NEW_ARRIVALS} element={<NewArrivalsPage />} />
+            <Route path={ROUTES.SALE} element={<SalePage />} />
 
             {/* Protected routes */}
             <Route

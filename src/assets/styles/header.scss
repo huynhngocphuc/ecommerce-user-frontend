@@ -1,0 +1,35 @@
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 1100;
+
+  .MuiToolbar-root {
+    min-height: 72px;
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .app-header {
+    .header-nav-item,
+    .header-icon-btn {
+      will-change: transform;
+    }
+  }
+}
+
+@media (hover: none), (pointer: coarse) {
+  .app-header {
+    .header-nav-item:hover,
+    .header-icon-btn:hover {
+      transform: none;
+      background-color: transparent;
+    }
+  }
+}
+
+@supports not (position: sticky) {
+  .app-header {
+    position: fixed;
+    inset: 0 0 auto 0;
+  }
+}
