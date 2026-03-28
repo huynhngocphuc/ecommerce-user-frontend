@@ -33,3 +33,5 @@ Thumbs.db
 *.tmp
 *.swp
 /.idea
+/.github
+/.specify

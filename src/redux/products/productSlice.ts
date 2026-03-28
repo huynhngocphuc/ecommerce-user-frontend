@@ -6,6 +6,7 @@ import { Product, ProductsResponse } from './type';
 interface ProductsState {
   loading: boolean;
   items: Product[];
+  cartItems: Product[];
   error: string | null;
   total: number;
 }
@@ -13,6 +14,7 @@ interface ProductsState {
 const initialState: ProductsState = {
   loading: false,
   items: [],
+  cartItems: [],
   error: null,
   total: 0,
 };
@@ -35,7 +37,20 @@ export const fetchProducts = createAsyncThunk<
 export const productSlice = createSlice({
   name: 'products',
   initialState,
-  reducers: {},
+  reducers: {
+    addToCart: (state, action: { payload: Product }) => {
+      state.cartItems.push(action.payload);
+    },
+    removeFromCart: (state, action: { payload: string }) => {
+      const index = state.cartItems.findIndex((item) => item.id === action.payload);
+      if (index >= 0) {
+        state.cartItems.splice(index, 1);
+      }
+    },
+    clearCart: (state) => {
+      state.cartItems = [];
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchProducts.pending, (state) => {
@@ -53,5 +68,10 @@ export const productSlice = createSlice({
       });
   },
 });
+
+export const { addToCart, removeFromCart, clearCart } = productSlice.actions;
+
+export const selectCartCount = (state: { products: ProductsState }) =>
+  state.products.cartItems.length;
 
 export default productSlice.reducer;

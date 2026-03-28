@@ -15,6 +15,7 @@ export interface ProductsResponse {
 export interface ProductsState {
   loading: boolean;
   items: Product[];
+  cartItems: Product[];
   error: string | null;
   total: number;
 }

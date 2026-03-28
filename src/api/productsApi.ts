@@ -13,10 +13,9 @@ export const getProducts = async (query?: { page?: number; limit?: number }): Pr
     return response.data;
   } catch (error: any) {
     const message = error?.response?.data?.message || error?.message || 'Failed to fetch products';
-    throw {
-      message,
-      code: error?.response?.status,
-    };
+    const apiError = new Error(message) as Error & ApiError;
+    apiError.code = error?.response?.status;
+    throw apiError;
   }
 };
 
@@ -26,9 +25,8 @@ export const getProductById = async (id: string): Promise<Product> => {
     return response.data;
   } catch (error: any) {
     const message = error?.response?.data?.message || error?.message || 'Failed to fetch product';
-    throw {
-      message,
-      code: error?.response?.status,
-    };
+    const apiError = new Error(message) as Error & ApiError;
+    apiError.code = error?.response?.status;
+    throw apiError;
   }
 };
