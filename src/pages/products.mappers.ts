@@ -4,6 +4,13 @@
 
 import { Product } from '../redux/products/type';
 
+export interface ActiveFilterChipView {
+  key: string;
+  label: string;
+  group: 'category' | 'priceRange' | 'size' | 'color' | 'brand' | 'style';
+  value: string;
+}
+
 /**
  * ProductListItemView: Canonical card-level view model
  * Aligns with data-model.md ProductListItemView entity
@@ -30,7 +37,7 @@ export function mapProductToListItemView(product: Product): ProductListItemView 
   }
 
   return {
-    id: product.id,
+    id: product.id || product._id || '',
     name: product.name,
     price: product.price,
     imageUrl: product.imageUrl,
@@ -67,4 +74,10 @@ export function isValidListItemView(item: ProductListItemView): boolean {
  */
 export function filterValidListItems(items: ProductListItemView[]): ProductListItemView[] {
   return items.filter(isValidListItemView);
+}
+
+export function mapActiveFiltersToChipViews(
+  chips: Array<{ key: string; label: string; group: ActiveFilterChipView['group']; value: string }>
+): ActiveFilterChipView[] {
+  return chips.map((chip) => ({ ...chip }));
 }

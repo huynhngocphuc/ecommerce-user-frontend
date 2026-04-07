@@ -1,39 +1,40 @@
-// src/components/ui/products/MobileFilterPanel.tsx
-// Mobile overlay filter panel with grouped filter controls and dismiss functionality
-// Appears as bottom sheet on mobile/tablet viewports
-
 import React from 'react';
-import { Box, Typography, Checkbox, FormControlLabel, Slider, Button, Divider, IconButton } from '@mui/material';
+import { Box, Typography, Checkbox, FormControlLabel, Button, Divider, IconButton, Chip, TextField } from '@mui/material';
 import { Close as CloseIcon } from '@mui/icons-material';
-import { useProductFilters } from '../../../hooks/useProductFilters';
-
-const AVAILABLE_SIZES = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
-const AVAILABLE_COLORS = ['Black', 'White', 'Red', 'Blue', 'Green', 'Navy'];
-const PRICE_RANGE = { min: 0, max: 500 };
+import { FILTER_OPTIONS, PREDEFINED_PRICE_RANGES, SortValue } from '../../../pages/products.constants';
 
 export interface MobileFilterPanelProps {
   onClose?: () => void;
+  selectedCategories: string[];
+  selectedPriceRanges: string[];
+  selectedSizes: string[];
+  selectedColors: string[];
+  selectedBrands: string[];
+  selectedStyles: string[];
+  activeFilterChips: Array<{ key: string; group: 'category' | 'priceRange' | 'size' | 'color' | 'brand' | 'style'; value: string; label: string }>;
+  brandSearchTerm: string;
+  sort: SortValue;
+  onBrandSearchTermChange: (value: string) => void;
+  onToggleFilterValue: (group: 'category' | 'priceRange' | 'size' | 'color' | 'brand' | 'style', value: string) => void;
+  onRemoveActiveFilter: (group: 'category' | 'priceRange' | 'size' | 'color' | 'brand' | 'style', value: string) => void;
+  onClearFilters: () => void;
 }
 
-export const MobileFilterPanel: React.FC<MobileFilterPanelProps> = ({ onClose }) => {
-  const {
-    selectedSizes,
-    selectedColors,
-    priceRange,
-    toggleSize,
-    toggleColor,
-    setPriceRange,
-    clearFilters,
-  } = useProductFilters();
-
-  const handlePriceChange = (event: Event, newValue: number | number[]) => {
-    if (Array.isArray(newValue)) {
-      setPriceRange({
-        min: newValue[0],
-        max: newValue[1],
-      });
-    }
-  };
+export const MobileFilterPanel: React.FC<MobileFilterPanelProps> = ({
+  onClose,
+  selectedCategories,
+  selectedPriceRanges,
+  selectedSizes,
+  selectedColors,
+  selectedBrands,
+  selectedStyles,
+  activeFilterChips,
+  brandSearchTerm,
+  onBrandSearchTermChange,
+  onToggleFilterValue,
+  onRemoveActiveFilter,
+  onClearFilters,
+}) => {
 
   const handleApplyFilters = () => {
     // Filters are already applied in real-time
@@ -41,8 +42,9 @@ export const MobileFilterPanel: React.FC<MobileFilterPanelProps> = ({ onClose })
     onClose?.();
   };
 
-  const priceMin = priceRange.min ?? PRICE_RANGE.min;
-  const priceMax = priceRange.max ?? PRICE_RANGE.max;
+  const visibleBrands = FILTER_OPTIONS.brands.filter((brand) =>
+    brand.toLowerCase().includes(brandSearchTerm.toLowerCase())
+  );
 
   return (
     <Box
@@ -89,7 +91,47 @@ export const MobileFilterPanel: React.FC<MobileFilterPanelProps> = ({ onClose })
           paddingBottom: '16px',
         }}
       >
-        {/* Size Filter Group */}
+        {activeFilterChips.length > 0 && (
+          <Box sx={{ mb: 2, display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+            {activeFilterChips.map((chip) => (
+              <Chip
+                key={chip.key}
+                label={chip.label}
+                onDelete={() => onRemoveActiveFilter(chip.group, chip.value)}
+                size="small"
+                variant="outlined"
+              />
+            ))}
+          </Box>
+        )}
+
+        <Typography variant="subtitle2" sx={{ marginBottom: '8px', fontWeight: 700 }}>Category</Typography>
+        {FILTER_OPTIONS.categories.map((category) => (
+          <FormControlLabel
+            key={category}
+            control={<Checkbox checked={selectedCategories.includes(category)} onChange={() => onToggleFilterValue('category', category)} size="small" />}
+            label={category}
+            sx={{ display: 'block', marginBottom: '4px', textTransform: 'capitalize' }}
+          />
+        ))}
+
+        <Divider sx={{ marginBottom: '24px' }} />
+
+        <Typography variant="subtitle2" sx={{ marginBottom: '8px', fontWeight: 700 }}>Price</Typography>
+        {PREDEFINED_PRICE_RANGES.map((range) => (
+          <Chip
+            key={range.value}
+            label={range.label}
+            clickable
+            onClick={() => onToggleFilterValue('priceRange', range.value)}
+            color={selectedPriceRanges.includes(range.value) ? 'primary' : 'default'}
+            variant={selectedPriceRanges.includes(range.value) ? 'filled' : 'outlined'}
+            sx={{ mr: 1, mb: 1 }}
+          />
+        ))}
+
+        <Divider sx={{ marginBottom: '24px' }} />
+
         <Box sx={{ marginBottom: '24px' }}>
           <Typography
             variant="subtitle2"
@@ -97,18 +139,15 @@ export const MobileFilterPanel: React.FC<MobileFilterPanelProps> = ({ onClose })
           >
             Size
           </Typography>
-          {AVAILABLE_SIZES.map((size) => (
-            <FormControlLabel
+          {FILTER_OPTIONS.sizes.map((size) => (
+            <Chip
               key={size}
-              control={
-                <Checkbox
-                  checked={selectedSizes.includes(size)}
-                  onChange={() => toggleSize(size)}
-                  size="small"
-                />
-              }
+              clickable
+              onClick={() => onToggleFilterValue('size', size)}
+              color={selectedSizes.includes(size) ? 'primary' : 'default'}
+              variant={selectedSizes.includes(size) ? 'filled' : 'outlined'}
+              sx={{ mr: 1, mb: 1 }}
               label={size}
-              sx={{ display: 'block', marginBottom: '4px' }}
             />
           ))}
         </Box>
@@ -123,13 +162,13 @@ export const MobileFilterPanel: React.FC<MobileFilterPanelProps> = ({ onClose })
           >
             Color
           </Typography>
-          {AVAILABLE_COLORS.map((color) => (
+          {FILTER_OPTIONS.colors.map((color) => (
             <FormControlLabel
               key={color}
               control={
                 <Checkbox
                   checked={selectedColors.includes(color)}
-                  onChange={() => toggleColor(color)}
+                  onChange={() => onToggleFilterValue('color', color)}
                   size="small"
                 />
               }
@@ -141,30 +180,37 @@ export const MobileFilterPanel: React.FC<MobileFilterPanelProps> = ({ onClose })
 
         <Divider sx={{ marginBottom: '24px' }} />
 
-        {/* Price Filter Group */}
-        <Box sx={{ marginBottom: '24px' }}>
-          <Typography
-            variant="subtitle2"
-            sx={{ marginBottom: '12px', fontWeight: 600 }}
-          >
-            Price Range
-          </Typography>
-          <Typography variant="caption" sx={{ display: 'block', marginBottom: '12px' }}>
-            ${priceMin} - ${priceMax}
-          </Typography>
-          <Slider
-            value={[priceMin, priceMax]}
-            onChange={handlePriceChange}
-            min={PRICE_RANGE.min}
-            max={PRICE_RANGE.max}
-            step={10}
-            marks={[
-              { value: PRICE_RANGE.min, label: '$0' },
-              { value: PRICE_RANGE.max, label: '$500' },
-            ]}
-            sx={{ marginBottom: '16px' }}
+        <Divider sx={{ marginBottom: '24px' }} />
+
+        <Typography variant="subtitle2" sx={{ marginBottom: '8px', fontWeight: 700 }}>Brand</Typography>
+        <TextField
+          size="small"
+          fullWidth
+          placeholder="Search brand..."
+          value={brandSearchTerm}
+          onChange={(event) => onBrandSearchTermChange(event.target.value)}
+          sx={{ mb: 1 }}
+        />
+        {visibleBrands.map((brand) => (
+          <FormControlLabel
+            key={brand}
+            control={<Checkbox checked={selectedBrands.includes(brand)} onChange={() => onToggleFilterValue('brand', brand)} size="small" />}
+            label={brand}
+            sx={{ display: 'block', marginBottom: '4px' }}
           />
-        </Box>
+        ))}
+
+        <Divider sx={{ marginBottom: '24px', marginTop: '8px' }} />
+
+        <Typography variant="subtitle2" sx={{ marginBottom: '8px', fontWeight: 700 }}>Style / Fit</Typography>
+        {FILTER_OPTIONS.styles.map((style) => (
+          <FormControlLabel
+            key={style}
+            control={<Checkbox checked={selectedStyles.includes(style)} onChange={() => onToggleFilterValue('style', style)} size="small" />}
+            label={style}
+            sx={{ display: 'block', marginBottom: '4px' }}
+          />
+        ))}
       </Box>
 
       {/* Action Buttons */}
@@ -180,7 +226,7 @@ export const MobileFilterPanel: React.FC<MobileFilterPanelProps> = ({ onClose })
           fullWidth
           variant="outlined"
           onClick={() => {
-            clearFilters();
+            onClearFilters();
           }}
           sx={{
             textTransform: 'none',

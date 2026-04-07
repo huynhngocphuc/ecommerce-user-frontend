@@ -2,6 +2,7 @@
 import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../redux/store';
+import { ProductListQuery } from '../api/productsApi';
 import {
   addToCart,
   clearCart,
@@ -18,7 +19,7 @@ export const useProducts = () => {
   const cartCount = useSelector(selectCartCount as (state: RootState) => number);
 
   const handleFetchProducts = useCallback(
-    (query?: { page?: number; limit?: number }) => dispatch(fetchProducts(query)),
+    (query?: ProductListQuery) => dispatch(fetchProducts(query)),
     [dispatch]
   );
 

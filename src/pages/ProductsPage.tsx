@@ -1,25 +1,44 @@
 // src/pages/ProductsPage.tsx
 import React, { useEffect } from 'react';
-import { Box, CircularProgress, Alert, Typography } from '@mui/material';
+import { Box, CircularProgress, Alert, Typography, Chip, Button, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 import { useProducts } from '../hooks/useProducts';
 import { useProductFilters } from '../hooks/useProductFilters';
 import { ProductGrid } from '../components/ui/products/ProductGrid';
 import { FilterSidebar } from '../components/ui/products/FilterSidebar';
 import { MobileFilterPanel } from '../components/ui/products/MobileFilterPanel';
-import { mapProductsToListItemViews, filterValidListItems } from './products.mappers';
+import { mapProductsToListItemViews, filterValidListItems, mapActiveFiltersToChipViews } from './products.mappers';
 import { GRID_CONTAINER } from './products.constants';
+import { SORT_OPTIONS } from './products.constants';
 
 const ProductsPage: React.FC = () => {
   const { products, loading, error, fetchProducts } = useProducts();
   const {
-    priceRange,
+    selectedCategories,
+    selectedPriceRanges,
+    selectedSizes,
+    selectedColors,
+    selectedBrands,
+    selectedStyles,
+    sort,
     isMobilePanelOpen,
     setMobilePanelOpen,
+    collapsedGroups,
+    brandSearchTerm,
+    setBrandSearchTerm,
+    toggleGroupCollapsed,
+    toggleFilterValue,
+    removeActiveFilter,
+    setSort,
+    clearFilters,
+    toProductQuery,
+    activeFilterChips,
   } = useProductFilters();
 
+  const activeChipViews = mapActiveFiltersToChipViews(activeFilterChips);
+
   useEffect(() => {
-    fetchProducts();
-  }, [fetchProducts]);
+    fetchProducts(toProductQuery());
+  }, [fetchProducts, toProductQuery]);
 
   // Map and filter products based on active filters and validation
   const filteredProducts = React.useMemo(() => {
@@ -31,18 +50,9 @@ const ProductsPage: React.FC = () => {
     // Filter by valid items
     const validItems = filterValidListItems(viewModels);
     
-    // Apply price filter
-    return validItems.filter((product) => {
-      if (priceRange.min !== undefined && product.price < priceRange.min) {
-        return false;
-      }
-      if (priceRange.max !== undefined && product.price > priceRange.max) {
-        return false;
-      }
-      return true;
-    });
+    return validItems;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [products, priceRange]);
+  }, [products]);
 
   console.log('ProductsPage render - products:', products, 'filteredProducts:', filteredProducts);
   return (
@@ -59,17 +69,73 @@ const ProductsPage: React.FC = () => {
     >
       {/* Desktop Sticky Sidebar */}
       <Box className="filter-sidebar">
-        <FilterSidebar />
+        <FilterSidebar
+          selectedCategories={selectedCategories}
+          selectedPriceRanges={selectedPriceRanges}
+          selectedSizes={selectedSizes}
+          selectedColors={selectedColors}
+          selectedBrands={selectedBrands}
+          selectedStyles={selectedStyles}
+          collapsedGroups={collapsedGroups}
+          brandSearchTerm={brandSearchTerm}
+          sort={sort}
+          onBrandSearchTermChange={setBrandSearchTerm}
+          onToggleGroupCollapsed={toggleGroupCollapsed}
+          onToggleFilterValue={toggleFilterValue}
+          onClearFilters={clearFilters}
+        />
       </Box>
 
       {/* Products Grid Region */}
       <Box className="products-grid-region" sx={{ flex: 1 }}>
         {/* Page Title */}
-        <Box sx={{ mb: 4 }}>
+        <Box sx={{ mb: 2 }}>
           <Typography variant="h4" component="h1" gutterBottom>
             Products
           </Typography>
+          <Box sx={{ display: 'flex', gap: 2, alignItems: 'center', flexWrap: 'wrap' }}>
+            <FormControl size="small" sx={{ minWidth: 220 }}>
+              <InputLabel id="sort-label">Sort by</InputLabel>
+              <Select
+                labelId="sort-label"
+                value={sort}
+                label="Sort by"
+                onChange={(event) => setSort(event.target.value as any)}
+              >
+                {SORT_OPTIONS.map((option) => (
+                  <MenuItem key={option.value} value={option.value}>
+                    {option.label}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <Button
+              variant="outlined"
+              className="filter-control"
+              onClick={() => setMobilePanelOpen(true)}
+              sx={{ display: { xs: 'inline-flex', lg: 'none' }, textTransform: 'none' }}
+            >
+              Open Filters
+            </Button>
+          </Box>
         </Box>
+
+        {activeChipViews.length > 0 && (
+          <Box sx={{ mb: 2, display: 'flex', gap: 1, flexWrap: 'wrap', alignItems: 'center' }}>
+            {activeChipViews.map((chip) => (
+              <Chip
+                key={chip.key}
+                label={chip.label}
+                onDelete={() => removeActiveFilter(chip.group, chip.value)}
+                color="primary"
+                variant="outlined"
+              />
+            ))}
+            <Button size="small" onClick={clearFilters} sx={{ textTransform: 'none' }}>
+              Clear all
+            </Button>
+          </Box>
+        )}
 
         {/* Error Alert */}
         {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
@@ -82,17 +148,17 @@ const ProductsPage: React.FC = () => {
         )}
 
         {/* Empty State */}
-        {!loading && products.length === 0 && (
+        {!loading && filteredProducts.length === 0 && (
           <Typography color="textSecondary">
-            {products?.length === 0
-              ? 'No products available'
-              : 'No products match your filters'}
+            {activeChipViews.length > 0
+              ? 'No products match your filters'
+              : 'No products available'}
           </Typography>
         )}
 
         {/* Product Grid */}
-        {!loading && products.length > 0 && (
-          <ProductGrid products={products} />
+        {!loading && filteredProducts.length > 0 && (
+          <ProductGrid products={filteredProducts} />
         )}
       </Box>
 
@@ -104,7 +170,22 @@ const ProductsPage: React.FC = () => {
             onClick={() => setMobilePanelOpen(false)}
           />
           <Box className="mobile-filter-panel open">
-            <MobileFilterPanel onClose={() => setMobilePanelOpen(false)} />
+            <MobileFilterPanel
+              onClose={() => setMobilePanelOpen(false)}
+              selectedCategories={selectedCategories}
+              selectedPriceRanges={selectedPriceRanges}
+              selectedSizes={selectedSizes}
+              selectedColors={selectedColors}
+              selectedBrands={selectedBrands}
+              selectedStyles={selectedStyles}
+              activeFilterChips={activeChipViews}
+              brandSearchTerm={brandSearchTerm}
+              sort={sort}
+              onBrandSearchTermChange={setBrandSearchTerm}
+              onToggleFilterValue={toggleFilterValue}
+              onRemoveActiveFilter={removeActiveFilter}
+              onClearFilters={clearFilters}
+            />
           </Box>
         </>
       )}

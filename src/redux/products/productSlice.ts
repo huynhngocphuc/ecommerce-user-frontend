@@ -1,6 +1,7 @@
 // src/redux/products/productSlice.ts
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { getProducts } from '../../api/productsApi';
+import { ProductListQuery } from '../../api/productsApi';
 import { Pagination, Product, ProductsResponse } from './type';
 
 interface ProductsState {
@@ -26,7 +27,7 @@ const initialState: ProductsState = {
 
 export const fetchProducts = createAsyncThunk<
   ProductsResponse,
-  { page?: number; limit?: number } | undefined
+  ProductListQuery | undefined
 >(
   'products/fetchAll',
   async (query, { rejectWithValue }) => {

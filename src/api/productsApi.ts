@@ -7,7 +7,22 @@ export interface ApiError {
   code?: string | number;
 }
 
-export const getProducts = async (query?: { page?: number; limit?: number }): Promise<ProductsResponse> => {
+export interface ProductListQuery {
+  page?: number;
+  limit?: number;
+  category?: string;
+  minPrice?: number;
+  maxPrice?: number;
+  priceRange?: string;
+  size?: string;
+  color?: string;
+  brand?: string;
+  style?: string;
+  sortBy?: 'createdAt' | 'price' | 'name';
+  sortOrder?: 'asc' | 'desc';
+}
+
+export const getProducts = async (query?: ProductListQuery): Promise<ProductsResponse> => {
   try {
     const response = await axiosClient.get<ProductsResponse>('/products', { params: query });
     return response.data;

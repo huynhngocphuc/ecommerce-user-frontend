@@ -54,3 +54,22 @@
     height: 40px;
     border-radius: 100% !important;
 }
+
+.filter-sidebar {
+  .MuiChip-root {
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+  }
+
+  .MuiIconButton-root {
+    transition: transform 0.18s ease;
+
+    &:hover {
+      transform: scale(1.05);
+    }
+  }
+}

@@ -1,12 +1,15 @@
-import exp from "constants";
-
 export interface Product {
   id: string;
+  _id?: string;
   name: string;
   price: number;
   description?: string;
   imageUrl?: string;
   category?: string;
+  size?: string;
+  color?: string;
+  brand?: string;
+  style?: string;
 }
 export interface Pagination {
   page: number;

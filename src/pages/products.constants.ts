@@ -82,6 +82,41 @@ export const FILTER_PANEL = {
   PANEL_Z_INDEX: 100,
 };
 
+export const FILTER_QUERY_KEYS = {
+  CATEGORY: 'category',
+  PRICE_RANGE: 'priceRange',
+  SIZE: 'size',
+  COLOR: 'color',
+  BRAND: 'brand',
+  STYLE: 'style',
+  SORT: 'sort',
+  PAGE: 'page',
+} as const;
+
+export type SortValue = 'newest' | 'price-asc' | 'price-desc';
+
+export const SORT_OPTIONS: Array<{ value: SortValue; label: string }> = [
+  { value: 'newest', label: 'Newest' },
+  { value: 'price-asc', label: 'Price low -> high' },
+  { value: 'price-desc', label: 'Price high -> low' },
+];
+
+export const FILTER_OPTIONS = {
+  categories: ['fashion', 'electronics', 'home', 'books', 'others'],
+  sizes: ['S', 'M', 'L', 'XL'],
+  colors: ['Black', 'White', 'Red', 'Blue', 'Green', 'Navy'],
+  brands: ['Nike', 'Adidas', 'Zara', 'H&M', 'Puma'],
+  styles: ['Oversize', 'Slim fit', 'Regular'],
+} as const;
+
+export const PREDEFINED_PRICE_RANGES = [
+  { value: 'under-500k', label: 'Under 500k', min: 0, max: 500000 },
+  { value: '500k-1m', label: '500k - 1m', min: 500000, max: 1000000 },
+  { value: 'over-1m', label: 'Over 1m', min: 1000000, max: null },
+] as const;
+
+export const FILTER_GROUP_ORDER = ['category', 'price', 'size', 'color', 'brand', 'style'] as const;
+
 /**
  * Responsive image source set policy
  * Prioritizes modern formats with fallback support

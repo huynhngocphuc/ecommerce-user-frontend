@@ -7,3 +7,15 @@
 @import "header.scss";
 @import 'variables';
 @import 'products-page';
+
+.products-page-container {
+	.filter-sidebar {
+		transition: top 0.2s ease;
+	}
+
+	.MuiChip-root,
+	.MuiButton-root,
+	.MuiFormControlLabel-root {
+		transition: all 0.2s ease;
+	}
+}
