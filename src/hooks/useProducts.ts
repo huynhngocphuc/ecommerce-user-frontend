@@ -1,4 +1,5 @@
 // src/hooks/useProducts.ts
+import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../redux/store';
 import {
@@ -11,22 +12,36 @@ import {
 
 export const useProducts = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { items, loading, error, total } = useSelector(
+  const { products, loading, error } = useSelector(
     (state: RootState) => state.products
   );
   const cartCount = useSelector(selectCartCount as (state: RootState) => number);
 
+  const handleFetchProducts = useCallback(
+    (query?: { page?: number; limit?: number }) => dispatch(fetchProducts(query)),
+    [dispatch]
+  );
+
+  const handleAddToCart = useCallback(
+    (product: RootState['products']['products'][number]) => dispatch(addToCart(product)),
+    [dispatch]
+  );
+
+  const handleRemoveFromCart = useCallback(
+    (productId: string) => dispatch(removeFromCart(productId)),
+    [dispatch]
+  );
+
+  const handleClearCart = useCallback(() => dispatch(clearCart()), [dispatch]);
+
   return {
-    items,
+    products,
     loading,
     error,
-    total,
     cartCount,
-    fetchProducts: (query?: { page?: number; limit?: number }) =>
-      dispatch(fetchProducts(query)),
-    addToCart: (product: RootState['products']['items'][number]) =>
-      dispatch(addToCart(product)),
-    removeFromCart: (productId: string) => dispatch(removeFromCart(productId)),
-    clearCart: () => dispatch(clearCart()),
+    fetchProducts: handleFetchProducts,
+    addToCart: handleAddToCart,
+    removeFromCart: handleRemoveFromCart,
+    clearCart: handleClearCart,
   };
 };

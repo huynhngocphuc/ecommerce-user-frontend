@@ -1,22 +1,27 @@
 // src/redux/products/productSlice.ts
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { getProducts } from '../../api/productsApi';
-import { Product, ProductsResponse } from './type';
+import { Pagination, Product, ProductsResponse } from './type';
 
 interface ProductsState {
   loading: boolean;
-  items: Product[];
+  products: Product[];
   cartItems: Product[];
   error: string | null;
-  total: number;
+  pagination: Pagination;
 }
 
 const initialState: ProductsState = {
   loading: false,
-  items: [],
+  products: [],
   cartItems: [],
   error: null,
-  total: 0,
+  pagination: {
+    page: 1,
+    limit: 10,
+    totalPages: 1,
+    totalItems: 0,
+  },
 };
 
 export const fetchProducts = createAsyncThunk<
@@ -59,8 +64,8 @@ export const productSlice = createSlice({
       })
       .addCase(fetchProducts.fulfilled, (state, action) => {
         state.loading = false;
-        state.items = action.payload.items;
-        state.total = action.payload.total;
+        state.products = action.payload.data.products;
+        state.pagination = action.payload.data.pagination;
       })
       .addCase(fetchProducts.rejected, (state, action) => {
         state.loading = false;

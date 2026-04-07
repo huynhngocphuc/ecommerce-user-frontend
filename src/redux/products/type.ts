@@ -1,3 +1,5 @@
+import exp from "constants";
+
 export interface Product {
   id: string;
   name: string;
@@ -6,15 +8,26 @@ export interface Product {
   imageUrl?: string;
   category?: string;
 }
+export interface Pagination {
+  page: number;
+  limit: number;
+  totalPages: number;
+  totalItems: number;
+}
+export interface ProductsStructure {
+  products: Product[];
+  total: number;
+  pagination: Pagination;
+}
 
 export interface ProductsResponse {
-  items: Product[];
-  total: number;
+  data: ProductsStructure;
+  message: string;
 }
 
 export interface ProductsState {
   loading: boolean;
-  items: Product[];
+  products: Product[];
   cartItems: Product[];
   error: string | null;
   total: number;
