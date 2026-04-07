@@ -1,86 +1,114 @@
 // src/pages/ProductsPage.tsx
 import React, { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Box, Container, Typography, CircularProgress, Alert, Card, CardContent, CardActions, Button } from '@mui/material';
+import { Box, CircularProgress, Alert, Typography } from '@mui/material';
 import { useProducts } from '../hooks/useProducts';
-import { useProtectedRoute } from '../hooks/useProtectedRoute';
-import { ROUTE_PATHS } from '../utils/routes';
+import { useProductFilters } from '../hooks/useProductFilters';
+import { ProductGrid } from '../components/ui/products/ProductGrid';
+import { FilterSidebar } from '../components/ui/products/FilterSidebar';
+import { MobileFilterPanel } from '../components/ui/products/MobileFilterPanel';
+import { mapProductsToListItemViews, filterValidListItems } from './products.mappers';
+import { GRID_CONTAINER } from './products.constants';
 
 const ProductsPage: React.FC = () => {
-  const navigate = useNavigate();
-  const { checkAuthentication } = useProtectedRoute();
-  const { items, loading, error, fetchProducts } = useProducts();
+  const { products, loading, error, fetchProducts } = useProducts();
+  const {
+    priceRange,
+    isMobilePanelOpen,
+    setMobilePanelOpen,
+  } = useProductFilters();
 
   useEffect(() => {
-    if (!checkAuthentication()) return;
-    // fetchProducts();
-  }, [checkAuthentication, fetchProducts]);
+    fetchProducts();
+  }, [fetchProducts]);
 
-  if (!checkAuthentication()) {
-    return null;
-  }
+  // Map and filter products based on active filters and validation
+  const filteredProducts = React.useMemo(() => {
+    if (!products) return [];
+    
+    // Map products to view model (ProductListItemView)
+    const viewModels = mapProductsToListItemViews(products);
+    
+    // Filter by valid items
+    const validItems = filterValidListItems(viewModels);
+    
+    // Apply price filter
+    return validItems.filter((product) => {
+      if (priceRange.min !== undefined && product.price < priceRange.min) {
+        return false;
+      }
+      if (priceRange.max !== undefined && product.price > priceRange.max) {
+        return false;
+      }
+      return true;
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [products, priceRange]);
 
+  console.log('ProductsPage render - products:', products, 'filteredProducts:', filteredProducts);
   return (
-    <Container maxWidth="lg" sx={{ py: 4 }}>
-      <Box sx={{ mb: 4 }}>
-        <Typography variant="h4" component="h1" gutterBottom>
-          Products
-        </Typography>
+    <Box
+      className="products-page-container"
+      sx={{
+        display: 'flex',
+        gap: 2,
+        maxWidth: `${GRID_CONTAINER.MAX_WIDTH_PX}px`,
+        margin: '0 auto',
+        padding: `0 ${GRID_CONTAINER.PADDING_PX}px`,
+        py: 4,
+      }}
+    >
+      {/* Desktop Sticky Sidebar */}
+      <Box className="filter-sidebar">
+        <FilterSidebar />
       </Box>
 
-      {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
-      {loading && <CircularProgress />}
+      {/* Products Grid Region */}
+      <Box className="products-grid-region" sx={{ flex: 1 }}>
+        {/* Page Title */}
+        <Box sx={{ mb: 4 }}>
+          <Typography variant="h4" component="h1" gutterBottom>
+            Products
+          </Typography>
+        </Box>
 
-      {!loading && items.length === 0 && (
-        <Typography color="textSecondary">No products available</Typography>
-      )}
+        {/* Error Alert */}
+        {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
 
-      <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr', md: '1fr 1fr 1fr' }, gap: 3 }}>
-        {items.map((product) => (
-          <Box key={product.id}>
-            <Card>
-              {product.imageUrl && (
-                <Box
-                  sx={{
-                    width: '100%',
-                    height: 200,
-                    backgroundImage: `url(${product.imageUrl})`,
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
-                  }}
-                />
-              )}
-              <CardContent>
-                <Typography variant="h6" gutterBottom>
-                  {product.name}
-                </Typography>
-                <Typography color="textSecondary" gutterBottom>
-                  ${product.price.toFixed(2)}
-                </Typography>
-                {product.description && (
-                  <Typography variant="body2" color="textSecondary">
-                    {product.description}
-                  </Typography>
-                )}
-                {product.category && (
-                  <Typography variant="caption" display="block" sx={{ mt: 1 }}>
-                    Category: {product.category}
-                  </Typography>
-                )}
-              </CardContent>
-              <CardActions>
-                <Button
-                  size="small"
-                  onClick={() => navigate(ROUTE_PATHS.PRODUCT_DETAIL(product.id))}
-                >
-                  View Details
-                </Button>
-              </CardActions>
-            </Card>
+        {/* Loading State */}
+        {loading && (
+          <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
+            <CircularProgress />
           </Box>
-        ))}
+        )}
+
+        {/* Empty State */}
+        {!loading && products.length === 0 && (
+          <Typography color="textSecondary">
+            {products?.length === 0
+              ? 'No products available'
+              : 'No products match your filters'}
+          </Typography>
+        )}
+
+        {/* Product Grid */}
+        {!loading && products.length > 0 && (
+          <ProductGrid products={products} />
+        )}
       </Box>
-    </Container>
+
+      {/* Mobile Filter Panel Overlay */}
+      {isMobilePanelOpen && (
+        <>
+          <Box
+            className="mobile-filter-backdrop open"
+            onClick={() => setMobilePanelOpen(false)}
+          />
+          <Box className="mobile-filter-panel open">
+            <MobileFilterPanel onClose={() => setMobilePanelOpen(false)} />
+          </Box>
+        </>
+      )}
+    </Box>
   );
 };
 

@@ -67,7 +67,7 @@ const App: React.FC = () => {
             {/* Protected routes */}
             <Route
               path={ROUTES.PRODUCTS}
-              element={protectedRouteElement(<ProductsPage />)}
+              element={<ProductsPage />}
             />
             <Route
               path={ROUTES.PRODUCT_DETAIL}

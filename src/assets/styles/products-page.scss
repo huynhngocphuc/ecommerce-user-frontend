@@ -1,0 +1,258 @@
+// Product Listing Page Styles
+// Responsive grid layout, product card styling, and filter panel behavior
+// Location: src/assets/styles/products-page.scss
+
+// Layout variables
+$sidebar-width: 240px;
+$sidebar-width-max: 280px;
+$container-max-width: 1320px;
+$container-min-width: 1200px;
+$grid-gap: 16px;
+$card-border-radius: 8px;
+$card-border-radius-max: 12px;
+
+// Breakpoints (must align with data-model.md LayoutBreakpointState)
+$breakpoint-mobile: 0;
+$breakpoint-tablet: 768px;
+$breakpoint-desktop: 1024px;
+
+// Products page layout container
+.products-page-container {
+  display: flex;
+  gap: $grid-gap;
+  max-width: $container-max-width;
+  margin: 0 auto;
+  padding: 0 16px;
+  overflow-x: hidden;
+
+  @media (max-width: #{$breakpoint-desktop - 1}) {
+    flex-direction: column;
+  }
+}
+
+// Desktop sidebar (sticky in viewport with internal scroll)
+.filter-sidebar {
+  flex-shrink: 0;
+  width: $sidebar-width;
+  
+  @media (min-width: $breakpoint-desktop) {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+  }
+
+  @media (max-width: #{$breakpoint-desktop - 1}) {
+    display: none;
+  }
+}
+
+// Product grid region
+.products-grid-region {
+  flex: 1;
+  min-width: 0; // Allow grid to shrink below content width
+
+  @media (max-width: #{$breakpoint-desktop - 1}) {
+    width: 100%;
+  }
+}
+
+// CSS Grid for product cards (required by contract)
+.products-grid {
+  display: grid;
+  gap: $grid-gap;
+  width: 100%;
+  overflow-x: hidden; // Prevent horizontal overflow
+  overflow-x: clip; // Modern alternative to hidden
+
+  // Desktop: 4 columns
+  @media (min-width: $breakpoint-desktop) {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  // Tablet: 3 columns target with fallback to 2
+  @media (min-width: $breakpoint-tablet) and (max-width: #{$breakpoint-desktop - 1}) {
+    // Calculate minimum card width: (viewport - sidebar - gap - padding) / 3
+    // For 3 columns: 768-280 = 488 / 3 = 162px min card width
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    
+    // Fallback: if grid collapses, enforce 2 columns
+    @supports not (grid-template-columns: repeat(auto-fit, minmax(160px, 1fr))) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    // Safe minimum width constraint: prevent overflow at narrow tablet widths
+    @media (max-width: #{$breakpoint-tablet + 200px}) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  // Mobile: 2 columns fixed
+  @media (max-width: #{$breakpoint-tablet - 1}) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  // Centered container (complement to JS max-width constraint)
+  margin: 0 auto;
+
+  // Column gap tuning: ensure consistency
+  @media (max-width: #{$breakpoint-desktop - 1}) {
+    gap: 12px; // Tighter spacing on mobile/tablet
+  }
+}
+
+// Product card base styles
+.product-card {
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border-radius: $card-border-radius;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  // Media frame container (4:5 aspect ratio)
+  .product-card-media {
+    position: relative;
+    width: 100%;
+    padding-bottom: 125%; // 4:5 = 125% height relative to width
+    background-color: #f5f5f5; // Loading placeholder
+
+    img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      border-radius: $card-border-radius;
+    }
+  }
+
+  // Content section
+  .product-card-content {
+    padding: 12px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  // Product name (2-line clamp)
+  .product-card-name {
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin: 0 0 8px 0;
+    flex: 1;
+  }
+
+  // Price
+  .product-card-price {
+    font-size: 16px;
+    font-weight: 600;
+    color: #000;
+    margin: 0;
+  }
+
+  // Desktop: hover state (subtle zoom + elevation)
+  @media (min-width: $breakpoint-desktop) {
+    &:hover {
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+
+      .product-card-media img {
+        transform: scale(1.05);
+      }
+    }
+
+    // Reduced motion support
+    @media (prefers-reduced-motion: reduce) {
+      &:hover {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+
+        .product-card-media img {
+          transform: scale(1.02);
+        }
+      }
+    }
+  }
+
+  // Transition safety
+  .product-card-media img {
+    transition: transform 0.3s ease;
+
+    @media (prefers-reduced-motion: reduce) {
+      transition: none;
+    }
+  }
+}
+
+// Mobile filter panel (overlay/drawer)
+.mobile-filter-panel {
+  display: none;
+
+  @media (max-width: #{$breakpoint-desktop - 1}) {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    max-height: 80vh;
+    background: #fff;
+    border-radius: 16px 16px 0 0;
+    z-index: 100;
+    flex-direction: column;
+
+    &.open {
+      display: flex;
+    }
+  }
+
+  @media (max-width: #{$breakpoint-tablet - 1}) {
+    max-height: 90vh;
+  }
+}
+
+// Mobile filter backdrop
+.mobile-filter-backdrop {
+  display: none;
+
+  @media (max-width: #{$breakpoint-desktop - 1}) {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 99;
+
+    &.open {
+      display: block;
+    }
+  }
+}
+
+// Filter control button (mobile only)
+.filter-control {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: #000;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+
+  @media (min-width: $breakpoint-desktop) {
+    display: none;
+  }
+}
