@@ -14,6 +14,7 @@ export interface ProductCardProps {
   price: number;
   imageUrl?: string;
   category?: string;
+  onOpenDetail?: (productId: string) => void;
 }
 
 export const ProductCard: React.FC<ProductCardProps> = ({
@@ -22,10 +23,16 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   price,
   imageUrl,
   category,
+  onOpenDetail,
 }) => {
   const navigate = useNavigate();
 
   const handleCardClick = () => {
+    if (onOpenDetail) {
+      onOpenDetail(id);
+      return;
+    }
+
     navigate(ROUTE_PATHS.PRODUCT_DETAIL(id));
   };
 

@@ -3,5 +3,6 @@
 
 export { ProductCard } from './ProductCard';
 export { ProductGrid } from './ProductGrid';
+export { ProductDetailModal } from './ProductDetailModal';
 export { FilterSidebar } from './FilterSidebar';
 export { MobileFilterPanel } from './MobileFilterPanel';

@@ -3,6 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import {
   FILTER_OPTIONS,
   FILTER_QUERY_KEYS,
+  PRODUCT_MODAL_QUERY_KEYS,
   PREDEFINED_PRICE_RANGES,
   SORT_OPTIONS,
   SortValue,
@@ -54,6 +55,10 @@ interface UseProductFiltersReturn extends ProductFiltersState {
   clearFilters: () => void;
   toProductQuery: (limit?: number) => ProductListQuery;
   activeFilterChips: Array<{ key: string; group: FilterGroupKey; value: string; label: string }>;
+  modalProductId: string | null;
+  isProductModalOpen: boolean;
+  openProductModal: (productId: string) => void;
+  closeProductModal: () => void;
 }
 
 export const useProductFilters = (): UseProductFiltersReturn => {
@@ -100,6 +105,18 @@ export const useProductFilters = (): UseProductFiltersReturn => {
   }, [searchParams]);
 
   const page = useMemo(() => parsePositiveNumber(searchParams.get(FILTER_QUERY_KEYS.PAGE), 1), [searchParams]);
+
+  const modalProductId = useMemo(() => {
+    const rawProductId = searchParams.get(PRODUCT_MODAL_QUERY_KEYS.PRODUCT_ID);
+    if (!rawProductId) {
+      return null;
+    }
+
+    const normalizedProductId = rawProductId.trim();
+    return normalizedProductId === '' ? null : normalizedProductId;
+  }, [searchParams]);
+
+  const isProductModalOpen = Boolean(modalProductId);
 
   const updateListParam = useCallback(
     (key: string, values: string[]) => {
@@ -193,6 +210,26 @@ export const useProductFilters = (): UseProductFiltersReturn => {
     setSearchParams(next, { replace: true });
   }, [searchParams, setSearchParams]);
 
+  const openProductModal = useCallback(
+    (productId: string) => {
+      const normalizedProductId = productId.trim();
+      if (!normalizedProductId) {
+        return;
+      }
+
+      const next = new URLSearchParams(searchParams);
+      next.set(PRODUCT_MODAL_QUERY_KEYS.PRODUCT_ID, normalizedProductId);
+      setSearchParams(next, { replace: false });
+    },
+    [searchParams, setSearchParams]
+  );
+
+  const closeProductModal = useCallback(() => {
+    const next = new URLSearchParams(searchParams);
+    next.delete(PRODUCT_MODAL_QUERY_KEYS.PRODUCT_ID);
+    setSearchParams(next, { replace: false });
+  }, [searchParams, setSearchParams]);
+
   const toggleGroupCollapsed = useCallback((group: string) => {
     setCollapsedGroups((prev) => ({ ...prev, [group]: !prev[group] }));
   }, []);
@@ -263,5 +300,9 @@ export const useProductFilters = (): UseProductFiltersReturn => {
     clearFilters,
     toProductQuery,
     activeFilterChips,
+    modalProductId,
+    isProductModalOpen,
+    openProductModal,
+    closeProductModal,
   };
 };

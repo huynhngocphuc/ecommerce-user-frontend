@@ -2,14 +2,27 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { getProducts } from '../../api/productsApi';
 import { ProductListQuery } from '../../api/productsApi';
-import { Pagination, Product, ProductsResponse } from './type';
+import { CartItem, Pagination, Product, ProductsResponse } from './type';
+
+interface ProductDetailModalState {
+  isOpen: boolean;
+  productId: string | null;
+}
+
+interface ProductDetailState {
+  loading: boolean;
+  product: Product | null;
+  error: string | null;
+}
 
 interface ProductsState {
   loading: boolean;
   products: Product[];
-  cartItems: Product[];
+  cartItems: CartItem[];
   error: string | null;
   pagination: Pagination;
+  productDetailModal: ProductDetailModalState;
+  productDetail: ProductDetailState;
 }
 
 const initialState: ProductsState = {
@@ -22,6 +35,15 @@ const initialState: ProductsState = {
     limit: 10,
     totalPages: 1,
     totalItems: 0,
+  },
+  productDetailModal: {
+    isOpen: false,
+    productId: null,
+  },
+  productDetail: {
+    loading: false,
+    product: null,
+    error: null,
   },
 };
 
@@ -44,7 +66,7 @@ export const productSlice = createSlice({
   name: 'products',
   initialState,
   reducers: {
-    addToCart: (state, action: { payload: Product }) => {
+    addToCart: (state, action: { payload: CartItem }) => {
       state.cartItems.push(action.payload);
     },
     removeFromCart: (state, action: { payload: string }) => {
@@ -55,6 +77,39 @@ export const productSlice = createSlice({
     },
     clearCart: (state) => {
       state.cartItems = [];
+    },
+    openProductDetailModal: (state, action: { payload: string }) => {
+      state.productDetailModal = {
+        isOpen: true,
+        productId: action.payload,
+      };
+    },
+    closeProductDetailModal: (state) => {
+      state.productDetailModal = {
+        isOpen: false,
+        productId: null,
+      };
+    },
+    setProductDetailLoading: (state) => {
+      state.productDetail.loading = true;
+      state.productDetail.error = null;
+    },
+    setProductDetailSuccess: (state, action: { payload: Product }) => {
+      state.productDetail.loading = false;
+      state.productDetail.error = null;
+      state.productDetail.product = action.payload;
+    },
+    setProductDetailError: (state, action: { payload: string }) => {
+      state.productDetail.loading = false;
+      state.productDetail.error = action.payload;
+      state.productDetail.product = null;
+    },
+    clearProductDetail: (state) => {
+      state.productDetail = {
+        loading: false,
+        product: null,
+        error: null,
+      };
     },
   },
   extraReducers: (builder) => {
@@ -75,7 +130,17 @@ export const productSlice = createSlice({
   },
 });
 
-export const { addToCart, removeFromCart, clearCart } = productSlice.actions;
+export const {
+  addToCart,
+  removeFromCart,
+  clearCart,
+  openProductDetailModal,
+  closeProductDetailModal,
+  setProductDetailLoading,
+  setProductDetailSuccess,
+  setProductDetailError,
+  clearProductDetail,
+} = productSlice.actions;
 
 export const selectCartCount = (state: { products: ProductsState }) =>
   state.products.cartItems.length;

@@ -3,7 +3,7 @@ import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../redux/store';
 import { ProductListQuery } from '../api/productsApi';
-import { Pagination } from '../redux/products/type';
+import { CartItem } from '../redux/products/type';
 import {
   addToCart,
   clearCart,
@@ -25,7 +25,7 @@ export const useProducts = () => {
   );
 
   const handleAddToCart = useCallback(
-    (product: RootState['products']['products'][number]) => dispatch(addToCart(product)),
+    (product: CartItem) => dispatch(addToCart(product)),
     [dispatch]
   );
 

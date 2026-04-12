@@ -73,3 +73,14 @@
     }
   }
 }
+
+.product-detail-option-chip,
+.product-detail-option-swatch {
+  transition: transform 0.18s ease, box-shadow 0.18s ease !important;
+
+  &:hover,
+  &:focus-visible {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(17, 24, 39, 0.15);
+  }
+}

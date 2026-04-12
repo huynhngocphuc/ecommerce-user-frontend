@@ -1,17 +1,34 @@
 // src/pages/ProductsPage.tsx
 import React, { useEffect } from 'react';
 import { Box, CircularProgress, Alert, Typography, Chip, Button, FormControl, InputLabel, Select, MenuItem, Pagination } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 import { useProducts } from '../hooks/useProducts';
 import { useProductFilters } from '../hooks/useProductFilters';
 import { ProductGrid } from '../components/ui/products/ProductGrid';
 import { FilterSidebar } from '../components/ui/products/FilterSidebar';
 import { MobileFilterPanel } from '../components/ui/products/MobileFilterPanel';
+import { ProductDetailModal } from '../components/ui/products/ProductDetailModal';
 import { mapProductsToListItemViews, filterValidListItems, mapActiveFiltersToChipViews } from './products.mappers';
 import { GRID_CONTAINER } from './products.constants';
 import { SORT_OPTIONS } from './products.constants';
+import { AppDispatch, RootState } from '../redux/store';
+import { getProductById } from '../api/productsApi';
+import {
+  clearProductDetail,
+  closeProductDetailModal,
+  openProductDetailModal,
+  setProductDetailError,
+  setProductDetailLoading,
+  setProductDetailSuccess,
+} from '../redux/products/productSlice';
+import { ROUTE_PATHS } from '../utils/routes';
 
 const ProductsPage: React.FC = () => {
-  const { products, loading, error, fetchProducts, pagination } = useProducts();
+  const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
+  const { products, loading, error, fetchProducts, pagination, addToCart } = useProducts();
+  const modalDetailState = useSelector((state: RootState) => state.products.productDetail);
   const {
     selectedCategories,
     selectedPriceRanges,
@@ -34,6 +51,10 @@ const ProductsPage: React.FC = () => {
     clearFilters,
     toProductQuery,
     activeFilterChips,
+    modalProductId,
+    isProductModalOpen,
+    openProductModal,
+    closeProductModal,
   } = useProductFilters();
 
   const activeChipViews = mapActiveFiltersToChipViews(activeFilterChips);
@@ -41,6 +62,75 @@ const ProductsPage: React.FC = () => {
   useEffect(() => {
     fetchProducts(toProductQuery());
   }, [fetchProducts, toProductQuery]);
+
+  useEffect(() => {
+    if (!modalProductId) {
+      dispatch(closeProductDetailModal());
+      dispatch(clearProductDetail());
+      return;
+    }
+
+    let mounted = true;
+    dispatch(openProductDetailModal(modalProductId));
+    dispatch(setProductDetailLoading());
+
+    getProductById(modalProductId)
+      .then((product) => {
+        if (!mounted) {
+          return;
+        }
+        dispatch(setProductDetailSuccess(product));
+      })
+      .catch((apiError: any) => {
+        if (!mounted) {
+          return;
+        }
+        dispatch(setProductDetailError(apiError?.message || 'Failed to load product detail'));
+      });
+
+    return () => {
+      mounted = false;
+    };
+  }, [dispatch, modalProductId]);
+
+  const handleOpenProductDetail = React.useCallback(
+    (productId: string) => {
+      openProductModal(productId);
+    },
+    [openProductModal]
+  );
+
+  const handleCloseProductDetail = React.useCallback(() => {
+    closeProductModal();
+    dispatch(closeProductDetailModal());
+    dispatch(clearProductDetail());
+  }, [closeProductModal, dispatch]);
+
+  const handleOpenFullDetail = React.useCallback(
+    (productId: string) => {
+      navigate(ROUTE_PATHS.PRODUCT_DETAIL(productId), {
+        state: {
+          returnTo: `/products${window.location.search || ''}`,
+        },
+      });
+    },
+    [navigate]
+  );
+
+  const handleAddToCartFromModal = React.useCallback(
+    (selection: { selectedSize?: string; selectedColor?: string }) => {
+      if (!modalDetailState.product) {
+        return;
+      }
+
+      addToCart({
+        ...modalDetailState.product,
+        selectedSize: selection.selectedSize,
+        selectedColor: selection.selectedColor,
+      });
+    },
+    [addToCart, modalDetailState.product]
+  );
 
   // Map and filter products based on active filters and validation
   const filteredProducts = React.useMemo(() => {
@@ -163,7 +253,7 @@ const ProductsPage: React.FC = () => {
 
         {/* Product Grid */}
         {!loading && filteredProducts.length > 0 && (
-          <ProductGrid products={filteredProducts} />
+          <ProductGrid products={filteredProducts} onOpenProductDetail={handleOpenProductDetail} />
         )}
 
         {/* Pagination */}
@@ -209,6 +299,16 @@ const ProductsPage: React.FC = () => {
           </Box>
         </>
       )}
+
+      <ProductDetailModal
+        open={isProductModalOpen}
+        product={modalDetailState.product}
+        loading={modalDetailState.loading}
+        error={modalDetailState.error}
+        onClose={handleCloseProductDetail}
+        onOpenFullDetail={handleOpenFullDetail}
+        onAddToCart={handleAddToCartFromModal}
+      />
     </Box>
   );
 };

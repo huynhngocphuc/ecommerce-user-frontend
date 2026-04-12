@@ -9,9 +9,10 @@ import { GRID_COLUMNS } from '../../../pages/products.constants';
 
 export interface ProductGridProps {
   products: ProductCardProps[];
+  onOpenProductDetail?: (productId: string) => void;
 }
 
-export const ProductGrid: React.FC<ProductGridProps> = ({ products }) => {
+export const ProductGrid: React.FC<ProductGridProps> = ({ products, onOpenProductDetail }) => {
   return (
     <Box
       className="products-grid"
@@ -51,6 +52,7 @@ export const ProductGrid: React.FC<ProductGridProps> = ({ products }) => {
           price={product.price}
           imageUrl={product.imageUrl}
           category={product.category}
+          onOpenDetail={onOpenProductDetail}
         />
       ))}
     </Box>

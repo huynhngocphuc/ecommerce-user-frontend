@@ -93,6 +93,15 @@ export const FILTER_QUERY_KEYS = {
   PAGE: 'page',
 } as const;
 
+export const PRODUCT_MODAL_QUERY_KEYS = {
+  PRODUCT_ID: 'productId',
+} as const;
+
+export const PRODUCT_MODAL_DEFAULTS = {
+  ENTRY_SCALE_FROM: 0.95,
+  ANIMATION_MS: 220,
+} as const;
+
 export type SortValue = 'newest' | 'price-asc' | 'price-desc';
 
 export const SORT_OPTIONS: Array<{ value: SortValue; label: string }> = [

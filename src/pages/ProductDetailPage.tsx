@@ -1,6 +1,6 @@
 // src/pages/ProductDetailPage.tsx
 import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { Box, Container, Typography, CircularProgress, Alert, Button } from '@mui/material';
 import { useProtectedRoute } from '../hooks/useProtectedRoute';
 import { useProducts } from '../hooks/useProducts';
@@ -11,6 +11,7 @@ import { ROUTES } from '../utils/routes';
 const ProductDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const location = useLocation();
   const { checkAuthentication } = useProtectedRoute();
   const { addToCart } = useProducts();
   const [product, setProduct] = useState<Product | null>(null);
@@ -50,7 +51,7 @@ const ProductDetailPage: React.FC = () => {
       {!loading && product && (
         <Box>
           <Button
-            onClick={() => navigate(ROUTES.PRODUCTS)}
+            onClick={() => navigate((location.state as any)?.returnTo || ROUTES.PRODUCTS)}
             sx={{ mb: 2 }}
           >
             ← Back to Products

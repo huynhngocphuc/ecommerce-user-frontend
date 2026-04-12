@@ -25,6 +25,29 @@ export interface ProductListItemView {
   color?: string;
 }
 
+export interface ProductMediaView {
+  url: string;
+  alt?: string;
+  isPrimary?: boolean;
+}
+
+export interface ProductVariantOptionView {
+  value: string;
+  label: string;
+  available: boolean;
+  swatchHex?: string;
+}
+
+export interface ProductDetailModalView {
+  id: string;
+  name: string;
+  price: number;
+  description: string;
+  media: ProductMediaView[];
+  sizeOptions: ProductVariantOptionView[];
+  colorOptions: ProductVariantOptionView[];
+}
+
 /**
  * Map a redux Product to ProductListItemView for card rendering
  * @param product Redux Product entity
@@ -56,6 +79,49 @@ export function mapProductToListItemView(product: Product): ProductListItemView 
  */
 export function mapProductsToListItemViews(products: Product[]): ProductListItemView[] {
   return products.map(mapProductToListItemView);
+}
+
+const normalizeVariantOptions = (
+  options: Product['sizeOptions'] | Product['colorOptions'] | undefined,
+  fallbackValue?: string
+): ProductVariantOptionView[] => {
+  if (Array.isArray(options) && options.length > 0) {
+    return options.map((option) => ({
+      value: option.value,
+      label: option.label || option.value,
+      available: option.available !== false,
+      swatchHex: option.swatchHex,
+    }));
+  }
+
+  if (!fallbackValue) {
+    return [];
+  }
+
+  return [{ value: fallbackValue, label: fallbackValue, available: true }];
+};
+
+export function mapProductToDetailModalView(product: Product): ProductDetailModalView {
+  const media =
+    product.media && product.media.length > 0
+      ? product.media.map((item) => ({
+          url: item.url,
+          alt: item.alt,
+          isPrimary: item.isPrimary,
+        }))
+      : product.imageUrl
+        ? [{ url: product.imageUrl, alt: product.name, isPrimary: true }]
+        : [];
+
+  return {
+    id: product.id || product._id || '',
+    name: product.name,
+    price: product.price,
+    description: product.description || '',
+    media,
+    sizeOptions: normalizeVariantOptions(product.sizeOptions, product.size),
+    colorOptions: normalizeVariantOptions(product.colorOptions, product.color),
+  };
 }
 
 /**
