@@ -1,6 +1,6 @@
 // src/pages/ProductsPage.tsx
 import React, { useEffect } from 'react';
-import { Box, CircularProgress, Alert, Typography, Chip, Button, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
+import { Box, CircularProgress, Alert, Typography, Chip, Button, FormControl, InputLabel, Select, MenuItem, Pagination } from '@mui/material';
 import { useProducts } from '../hooks/useProducts';
 import { useProductFilters } from '../hooks/useProductFilters';
 import { ProductGrid } from '../components/ui/products/ProductGrid';
@@ -11,7 +11,7 @@ import { GRID_CONTAINER } from './products.constants';
 import { SORT_OPTIONS } from './products.constants';
 
 const ProductsPage: React.FC = () => {
-  const { products, loading, error, fetchProducts } = useProducts();
+  const { products, loading, error, fetchProducts, pagination } = useProducts();
   const {
     selectedCategories,
     selectedPriceRanges,
@@ -20,6 +20,7 @@ const ProductsPage: React.FC = () => {
     selectedBrands,
     selectedStyles,
     sort,
+    page,
     isMobilePanelOpen,
     setMobilePanelOpen,
     collapsedGroups,
@@ -29,6 +30,7 @@ const ProductsPage: React.FC = () => {
     toggleFilterValue,
     removeActiveFilter,
     setSort,
+    setPage,
     clearFilters,
     toProductQuery,
     activeFilterChips,
@@ -109,6 +111,9 @@ const ProductsPage: React.FC = () => {
                 ))}
               </Select>
             </FormControl>
+            <Typography variant="body2" color="textSecondary" sx={{ ml: 'auto' }}>
+              Showing {filteredProducts.length > 0 ? (page - 1) * pagination.limit + 1 : 0} - {Math.min(page * pagination.limit, pagination.totalItems)} of {pagination.totalItems}
+            </Typography>
             <Button
               variant="outlined"
               className="filter-control"
@@ -159,6 +164,21 @@ const ProductsPage: React.FC = () => {
         {/* Product Grid */}
         {!loading && filteredProducts.length > 0 && (
           <ProductGrid products={filteredProducts} />
+        )}
+
+        {/* Pagination */}
+        {!loading && filteredProducts.length > 0 && pagination.totalPages > 1 && (
+          <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+            <Pagination
+              count={pagination.totalPages}
+              page={page}
+              onChange={(_, pageNumber) => setPage(pageNumber)}
+              color="primary"
+              size="large"
+              showFirstButton
+              showLastButton
+            />
+          </Box>
         )}
       </Box>
 

@@ -50,6 +50,7 @@ interface UseProductFiltersReturn extends ProductFiltersState {
   toggleFilterValue: (group: FilterGroupKey, value: string) => void;
   removeActiveFilter: (group: FilterGroupKey, value: string) => void;
   setSort: (sort: SortValue) => void;
+  setPage: (page: number) => void;
   clearFilters: () => void;
   toProductQuery: (limit?: number) => ProductListQuery;
   activeFilterChips: Array<{ key: string; group: FilterGroupKey; value: string; label: string }>;
@@ -166,6 +167,19 @@ export const useProductFilters = (): UseProductFiltersReturn => {
     [searchParams, setSearchParams]
   );
 
+  const setPage = useCallback(
+    (nextPage: number) => {
+      const next = new URLSearchParams(searchParams);
+      if (nextPage <= 1) {
+        next.delete(FILTER_QUERY_KEYS.PAGE);
+      } else {
+        next.set(FILTER_QUERY_KEYS.PAGE, String(nextPage));
+      }
+      setSearchParams(next, { replace: true });
+    },
+    [searchParams, setSearchParams]
+  );
+
   const clearFilters = useCallback(() => {
     const next = new URLSearchParams(searchParams);
     next.delete(FILTER_QUERY_KEYS.CATEGORY);
@@ -245,6 +259,7 @@ export const useProductFilters = (): UseProductFiltersReturn => {
     toggleFilterValue,
     removeActiveFilter,
     setSort,
+    setPage,
     clearFilters,
     toProductQuery,
     activeFilterChips,
