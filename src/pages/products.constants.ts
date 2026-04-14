@@ -102,6 +102,18 @@ export const PRODUCT_MODAL_DEFAULTS = {
   ANIMATION_MS: 220,
 } as const;
 
+export const PRODUCT_MODAL_MEDIA = {
+  ASPECT_RATIO: '4:5' as const,
+  ASPECT_RATIO_NUMBER: 1.25,
+  OBJECT_FIT: 'cover' as const,
+  BORDER_RADIUS_PX: 12,
+  THUMBNAIL_SIZE_PX: 56,
+  MOBILE_THUMBNAIL_SIZE_PX: 52,
+  MEDIA_GAP_PX: 10,
+  MAIN_MEDIA_MIN_HEIGHT_PX: 260,
+  MOBILE_MAIN_MEDIA_MIN_HEIGHT_PX: 220,
+} as const;
+
 export type SortValue = 'newest' | 'price-asc' | 'price-desc';
 
 export const SORT_OPTIONS: Array<{ value: SortValue; label: string }> = [

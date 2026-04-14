@@ -31,6 +31,11 @@ export interface ProductMediaView {
   isPrimary?: boolean;
 }
 
+export interface ProductModalMediaView extends ProductMediaView {
+  aspectRatio: '4:5';
+  objectFit: 'cover';
+}
+
 export interface ProductVariantOptionView {
   value: string;
   label: string;
@@ -43,7 +48,7 @@ export interface ProductDetailModalView {
   name: string;
   price: number;
   description: string;
-  media: ProductMediaView[];
+  media: ProductModalMediaView[];
   sizeOptions: ProductVariantOptionView[];
   colorOptions: ProductVariantOptionView[];
 }
@@ -101,24 +106,43 @@ const normalizeVariantOptions = (
   return [{ value: fallbackValue, label: fallbackValue, available: true }];
 };
 
-export function mapProductToDetailModalView(product: Product): ProductDetailModalView {
-  const media =
-    product.media && product.media.length > 0
-      ? product.media.map((item) => ({
-          url: item.url,
-          alt: item.alt,
-          isPrimary: item.isPrimary,
-        }))
-      : product.imageUrl
-        ? [{ url: product.imageUrl, alt: product.name, isPrimary: true }]
-        : [];
+const normalizeMedia = (product: Product): ProductModalMediaView[] => {
+  const mediaItems = Array.isArray(product.media) ? product.media : [];
 
+  if (mediaItems.length > 0) {
+    return mediaItems
+      .filter((item) => item && typeof item.url === 'string' && item.url.trim() !== '')
+      .map((item) => ({
+        url: item.url,
+        alt: item.alt || product.name,
+        isPrimary: Boolean(item.isPrimary),
+        aspectRatio: '4:5' as const,
+        objectFit: 'cover' as const,
+      }));
+  }
+
+  if (product.imageUrl) {
+    return [
+      {
+        url: product.imageUrl,
+        alt: product.name,
+        isPrimary: true,
+        aspectRatio: '4:5' as const,
+        objectFit: 'cover' as const,
+      },
+    ];
+  }
+
+  return [];
+};
+
+export function mapProductToDetailModalView(product: Product): ProductDetailModalView {
   return {
     id: product.id || product._id || '',
     name: product.name,
     price: product.price,
     description: product.description || '',
-    media,
+    media: normalizeMedia(product),
     sizeOptions: normalizeVariantOptions(product.sizeOptions, product.size),
     colorOptions: normalizeVariantOptions(product.colorOptions, product.color),
   };

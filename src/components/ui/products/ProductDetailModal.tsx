@@ -11,6 +11,7 @@ import {
   Typography,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
+import { PRODUCT_MODAL_MEDIA } from '../../../pages/products.constants';
 import { Product } from '../../../redux/products/type';
 import { mapProductToDetailModalView } from '../../../pages/products.mappers';
 
@@ -37,6 +38,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
   const [activeMediaIndex, setActiveMediaIndex] = useState(0);
   const [touchStartX, setTouchStartX] = useState<number | null>(null);
+  const [brokenMediaUrls, setBrokenMediaUrls] = useState<string[]>([]);
 
   const detailView = useMemo(() => {
     if (!product) {
@@ -48,15 +50,35 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
   useEffect(() => {
     setSelectedSize(null);
     setSelectedColor(null);
-    setActiveMediaIndex(0);
+    setBrokenMediaUrls([]);
     setTouchStartX(null);
   }, [detailView?.id]);
 
-  const mediaItems = detailView?.media || [];
+  const mediaItems = useMemo(() => detailView?.media || [], [detailView]);
   const activeMedia = mediaItems[activeMediaIndex] || mediaItems[0];
 
+  useEffect(() => {
+    const primaryIndex = mediaItems.findIndex((media) => media.isPrimary);
+    setActiveMediaIndex(primaryIndex >= 0 ? primaryIndex : 0);
+  }, [mediaItems]);
+
+  useEffect(() => {
+    if (activeMediaIndex >= mediaItems.length) {
+      setActiveMediaIndex(0);
+    }
+  }, [activeMediaIndex, mediaItems.length]);
+
+  const isBrokenMedia = Boolean(activeMedia && brokenMediaUrls.includes(activeMedia.url));
+
   const handleThumbnailClick = (index: number) => {
+    if (index === activeMediaIndex) {
+      return;
+    }
     setActiveMediaIndex(index);
+  };
+
+  const handleMediaError = (mediaUrl: string) => {
+    setBrokenMediaUrls((current) => (current.includes(mediaUrl) ? current : [...current, mediaUrl]));
   };
 
   const handleTouchStart = (event: React.TouchEvent<HTMLDivElement>) => {
@@ -143,13 +165,22 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
                 className="product-detail-modal-media"
                 onTouchStart={handleTouchStart}
                 onTouchEnd={handleTouchEnd}
+                sx={{
+                  minHeight: {
+                    xs: PRODUCT_MODAL_MEDIA.MOBILE_MAIN_MEDIA_MIN_HEIGHT_PX,
+                    md: PRODUCT_MODAL_MEDIA.MAIN_MEDIA_MIN_HEIGHT_PX,
+                  },
+                }}
               >
-                {activeMedia ? (
+                {activeMedia && !isBrokenMedia ? (
                   <img
                     key={activeMedia.url}
                     src={activeMedia.url}
                     alt={activeMedia.alt || detailView.name}
                     className="product-detail-main-image"
+                    loading="eager"
+                    decoding="async"
+                    onError={() => handleMediaError(activeMedia.url)}
                   />
                 ) : (
                   <Box className="product-detail-modal-no-image">No image available</Box>
@@ -166,7 +197,17 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
                       onClick={() => handleThumbnailClick(index)}
                       aria-label={`Show image ${index + 1}`}
                     >
-                      <img src={media.url} alt={media.alt || `${detailView.name} thumbnail ${index + 1}`} />
+                        {!brokenMediaUrls.includes(media.url) ? (
+                          <img
+                            src={media.url}
+                            alt={media.alt || `${detailView.name} thumbnail ${index + 1}`}
+                            loading="lazy"
+                            decoding="async"
+                            onError={() => handleMediaError(media.url)}
+                          />
+                        ) : (
+                          <Box className="product-detail-modal-thumb-fallback">No image</Box>
+                        )}
                     </button>
                   ))}
                 </Stack>
