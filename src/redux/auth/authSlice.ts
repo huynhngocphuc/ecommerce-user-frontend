@@ -32,8 +32,8 @@ export const login = createAsyncThunk(
   async (credentials: { email: string; password: string }, { rejectWithValue }) => {
     try {
       const data = await loginApi(credentials);
-      if (data.user) {
-        return data.user;
+      if (data) {
+        return data;
       }
 
       const profile = await getProfileApi();
@@ -121,8 +121,9 @@ export const authSlice = createSlice({
         state.failureReason = null;
       })
       .addCase(login.fulfilled, (state, action) => {
+        console.log("🚀 ~ action:", action)
         state.isLoading = false;
-        state.user = action.payload;
+        state.user = action.payload.data;
         state.sessionStatus = 'authenticated';
         state.lastVerifiedAt = new Date().toISOString();
       })
@@ -137,7 +138,7 @@ export const authSlice = createSlice({
       })
       .addCase(bootstrapSession.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.user = action.payload;
+        state.user = action.payload.data;
         state.sessionStatus = 'authenticated';
         state.lastVerifiedAt = new Date().toISOString();
         state.error = null;
@@ -154,7 +155,7 @@ export const authSlice = createSlice({
       })
       .addCase(refreshSession.fulfilled, (state, action) => {
         state.isRefreshing = false;
-        state.user = action.payload;
+        state.user = action.payload.data;
         state.sessionStatus = 'authenticated';
         state.lastVerifiedAt = new Date().toISOString();
         state.error = null;

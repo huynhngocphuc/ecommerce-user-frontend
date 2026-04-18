@@ -1,0 +1,17 @@
+{
+  "welcome": "Welcome",
+  "add_to_cart": "Add to Cart",
+  "remove_from_cart": "Remove from Cart",
+  "quantity": "Quantity",
+  "price": "Price",
+  "logout": "Logout",
+  "login": "Login",
+  "menu": "Menu",
+  "shop_name": "Girlhaf Clothing",
+  "search": "Search",
+  "account": "Account",
+  "nav.home": "Home",
+  "nav.shop": "Shop",
+  "nav.new-arrivals": "New Arrivals",
+  "nav.sale": "Sale"
+}

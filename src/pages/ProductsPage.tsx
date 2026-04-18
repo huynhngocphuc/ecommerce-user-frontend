@@ -2,6 +2,7 @@
 import React, { useEffect } from 'react';
 import { Box, CircularProgress, Alert, Typography, Chip, Button, FormControl, InputLabel, Select, MenuItem, Pagination } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { useProducts } from '../hooks/useProducts';
 import { useProductFilters } from '../hooks/useProductFilters';
@@ -27,6 +28,8 @@ import { ROUTE_PATHS } from '../utils/routes';
 const ProductsPage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
+  const { t } = useTranslation('product');
+  const tr = t as unknown as (key: string) => string;
   const { products, loading, error, fetchProducts, pagination, addToCart } = useProducts();
   const modalDetailState = useSelector((state: RootState) => state.products.productDetail);
   const {
@@ -183,26 +186,26 @@ const ProductsPage: React.FC = () => {
         {/* Page Title */}
         <Box sx={{ mb: 2 }}>
           <Typography variant="h4" component="h1" gutterBottom>
-            Products
+            {tr('products')}
           </Typography>
           <Box sx={{ display: 'flex', gap: 2, alignItems: 'center', flexWrap: 'wrap' }}>
             <FormControl size="small" sx={{ minWidth: 220 }}>
-              <InputLabel id="sort-label">Sort by</InputLabel>
+              <InputLabel id="sort-label">{tr('sort_by')}</InputLabel>
               <Select
                 labelId="sort-label"
                 value={sort}
-                label="Sort by"
+                label={tr('sort_by')}
                 onChange={(event) => setSort(event.target.value as any)}
               >
                 {SORT_OPTIONS.map((option) => (
                   <MenuItem key={option.value} value={option.value}>
-                    {option.label}
+                    {tr(`sort.${option.value}`)}
                   </MenuItem>
                 ))}
               </Select>
             </FormControl>
             <Typography variant="body2" color="textSecondary" sx={{ ml: 'auto' }}>
-              Showing {filteredProducts.length > 0 ? (page - 1) * pagination.limit + 1 : 0} - {Math.min(page * pagination.limit, pagination.totalItems)} of {pagination.totalItems}
+              {tr('showing')} {filteredProducts.length > 0 ? (page - 1) * pagination.limit + 1 : 0} - {Math.min(page * pagination.limit, pagination.totalItems)} {tr('of')} {pagination.totalItems}
             </Typography>
             <Button
               variant="outlined"
@@ -210,7 +213,7 @@ const ProductsPage: React.FC = () => {
               onClick={() => setMobilePanelOpen(true)}
               sx={{ display: { xs: 'inline-flex', lg: 'none' }, textTransform: 'none' }}
             >
-              Open Filters
+              {tr('open_filters')}
             </Button>
           </Box>
         </Box>
@@ -227,7 +230,7 @@ const ProductsPage: React.FC = () => {
               />
             ))}
             <Button size="small" onClick={clearFilters} sx={{ textTransform: 'none' }}>
-              Clear all
+              {tr('clear_all')}
             </Button>
           </Box>
         )}
@@ -246,8 +249,8 @@ const ProductsPage: React.FC = () => {
         {!loading && filteredProducts.length === 0 && (
           <Typography color="textSecondary">
             {activeChipViews.length > 0
-              ? 'No products match your filters'
-              : 'No products available'}
+              ? tr('no_products_match')
+              : tr('no_products_available')}
           </Typography>
         )}
 

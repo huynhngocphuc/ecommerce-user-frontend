@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Box,
   Typography,
@@ -73,6 +74,8 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
   const visibleBrands = FILTER_OPTIONS.brands.filter((brand) =>
     brand.toLowerCase().includes(brandSearchTerm.toLowerCase())
   );
+  const { t } = useTranslation('product');
+  const tr = t as unknown as (key: string) => string;
 
   return (
     <Box
@@ -85,10 +88,10 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
       }}
     >
       <Typography variant="h6" sx={{ marginBottom: '16px', fontWeight: 700 }}>
-        Filters
+        {tr('filters')}
       </Typography>
 
-      {renderGroupTitle('Category', 'category', collapsedGroups, onToggleGroupCollapsed)}
+      {renderGroupTitle(tr('category'), 'category', collapsedGroups, onToggleGroupCollapsed)}
       {!collapsedGroups.category && FILTER_OPTIONS.categories.map((category) => (
         <FormControlLabel
           key={category}
@@ -100,11 +103,11 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
 
       <Divider sx={{ marginBottom: '16px', marginTop: '12px' }} />
 
-      {renderGroupTitle('Price', 'price', collapsedGroups, onToggleGroupCollapsed)}
+      {renderGroupTitle(tr('price'), 'price', collapsedGroups, onToggleGroupCollapsed)}
       {!collapsedGroups.price && PREDEFINED_PRICE_RANGES.map((range) => (
         <Chip
           key={range.value}
-          label={range.label}
+          label={tr(`price_range.${range.value}`)}
           clickable
           onClick={() => onToggleFilterValue('priceRange', range.value)}
           color={selectedPriceRanges.includes(range.value) ? 'primary' : 'default'}
@@ -116,7 +119,7 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
       <Divider sx={{ marginBottom: '16px', marginTop: '12px' }} />
 
       {/* Size Filter Group */}
-      {renderGroupTitle('Size', 'size', collapsedGroups, onToggleGroupCollapsed)}
+      {renderGroupTitle(tr('size'), 'size', collapsedGroups, onToggleGroupCollapsed)}
       {!collapsedGroups.size && (
       <Box sx={{ marginBottom: '24px' }}>
         {FILTER_OPTIONS.sizes.map((size) => (
@@ -135,7 +138,7 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
 
       <Divider sx={{ marginBottom: '16px', marginTop: '12px' }} />
 
-      {renderGroupTitle('Color', 'color', collapsedGroups, onToggleGroupCollapsed)}
+      {renderGroupTitle(tr('color'), 'color', collapsedGroups, onToggleGroupCollapsed)}
       {!collapsedGroups.color && (
       <Box sx={{ marginBottom: '24px' }}>
         {FILTER_OPTIONS.colors.map((color) => (
@@ -160,13 +163,13 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
 
       <Divider sx={{ marginBottom: '16px', marginTop: '12px' }} />
 
-      {renderGroupTitle('Brand', 'brand', collapsedGroups, onToggleGroupCollapsed)}
+      {renderGroupTitle(tr('brand'), 'brand', collapsedGroups, onToggleGroupCollapsed)}
       {!collapsedGroups.brand && (
         <Box sx={{ marginBottom: '16px' }}>
           <TextField
             size="small"
             fullWidth
-            placeholder="Search brand..."
+            placeholder={tr('search_brand')}
             value={brandSearchTerm}
             onChange={(event) => onBrandSearchTermChange(event.target.value)}
             sx={{ mb: 1 }}
@@ -180,14 +183,14 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
             />
           ))}
           {visibleBrands.length === 0 && (
-            <Typography variant="caption" color="text.secondary">No matching brands</Typography>
+            <Typography variant="caption" color="text.secondary">{tr('no_matching_brands')}</Typography>
           )}
         </Box>
       )}
 
       <Divider sx={{ marginBottom: '16px', marginTop: '12px' }} />
 
-      {renderGroupTitle('Style / Fit', 'style', collapsedGroups, onToggleGroupCollapsed)}
+      {renderGroupTitle(tr('style_fit'), 'style', collapsedGroups, onToggleGroupCollapsed)}
       {!collapsedGroups.style && FILTER_OPTIONS.styles.map((style) => (
         <FormControlLabel
           key={style}
@@ -213,7 +216,7 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
           },
         }}
       >
-        Clear Filters
+        {tr('clear_filters')}
       </Button>
     </Box>
   );

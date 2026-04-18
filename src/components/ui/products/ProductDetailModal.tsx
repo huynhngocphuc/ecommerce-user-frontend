@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Alert,
   Box,
@@ -34,6 +35,8 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
   onOpenFullDetail,
   onAddToCart,
 }) => {
+  const { t } = useTranslation('product');
+  const tr = t as unknown as (key: string, options?: Record<string, unknown>) => string;
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
   const [activeMediaIndex, setActiveMediaIndex] = useState(0);
@@ -152,7 +155,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
         {loading && (
           <Stack className="product-detail-modal-loading" alignItems="center" justifyContent="center" spacing={2}>
             <CircularProgress />
-            <Typography variant="body2">Loading product details...</Typography>
+            <Typography variant="body2">{tr('loading_product_details')}</Typography>
           </Stack>
         )}
 
@@ -183,7 +186,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
                     onError={() => handleMediaError(activeMedia.url)}
                   />
                 ) : (
-                  <Box className="product-detail-modal-no-image">No image available</Box>
+                  <Box className="product-detail-modal-no-image">{tr('no_image_available')}</Box>
                 )}
               </Box>
 
@@ -195,7 +198,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
                       type="button"
                       className={`product-detail-modal-thumb ${index === activeMediaIndex ? 'active' : ''}`}
                       onClick={() => handleThumbnailClick(index)}
-                      aria-label={`Show image ${index + 1}`}
+                      aria-label={tr('show_image', { index: index + 1 })}
                     >
                         {!brokenMediaUrls.includes(media.url) ? (
                           <img
@@ -206,7 +209,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
                             onError={() => handleMediaError(media.url)}
                           />
                         ) : (
-                          <Box className="product-detail-modal-thumb-fallback">No image</Box>
+                          <Box className="product-detail-modal-thumb-fallback">{tr('no_image')}</Box>
                         )}
                     </button>
                   ))}
@@ -220,13 +223,13 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
                 ${detailView.price.toFixed(2)}
               </Typography>
               <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                {detailView.description || 'No description available for this product.'}
+                {detailView.description || tr('no_description')}
               </Typography>
 
               {detailView.sizeOptions.length > 0 && (
                 <Box sx={{ mb: 2 }}>
                   <Typography variant="subtitle2" sx={{ mb: 1 }}>
-                    Sizes
+                    {tr('sizes')}
                   </Typography>
                   <Stack direction="row" spacing={1} useFlexGap flexWrap="wrap">
                     {detailView.sizeOptions.map((option) => (
@@ -246,7 +249,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
               {detailView.colorOptions.length > 0 && (
                 <Box sx={{ mb: 2 }}>
                   <Typography variant="subtitle2" sx={{ mb: 1 }}>
-                    Colors
+                    {tr('colors')}
                   </Typography>
                   <Stack direction="row" spacing={1} useFlexGap flexWrap="wrap">
                     {detailView.colorOptions.map((option) => (
@@ -274,7 +277,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
 
               {!canAddToCart && (isSizeRequired || isColorRequired) && (
                 <Typography variant="caption" color="error" sx={{ mb: 1 }}>
-                  Select required options before adding to cart.
+                  {tr('select_required_options')}
                 </Typography>
               )}
 
@@ -289,7 +292,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
                 }
                 sx={{ textTransform: 'none', mb: 1 }}
               >
-                Add to cart
+                {tr('add_to_cart')}
               </Button>
 
               <Button
@@ -297,7 +300,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
                 onClick={() => onOpenFullDetail(detailView.id)}
                 className="product-detail-modal-full-link"
               >
-                View full product page
+                {tr('view_full_product_page')}
               </Button>
             </Box>
           </Box>

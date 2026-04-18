@@ -2,6 +2,7 @@
 import axiosClient from './axiosClient';
 import { User } from '../redux/auth/type';
 import { AUTH_API_ROUTES } from '../utils/routes';
+import { ApiResponse } from '../common/typeCommon';
 
 interface LoginCredentials {
   email: string;
@@ -26,16 +27,16 @@ const toApiError = (error: any, fallbackMessage: string): ApiError => {
   };
 };
 
-export const login = async (email: string, password: string): Promise<LoginResponse> => {
+export const login = async (email: string, password: string): Promise<ApiResponse<User>> => {
   try {
-    const response = await axiosClient.post<LoginResponse>(AUTH_API_ROUTES.LOGIN, { email, password });
+    const response = await axiosClient.post<ApiResponse<User>>(AUTH_API_ROUTES.LOGIN, { email, password });
     return response.data;
   } catch (error: any) {
     throw toApiError(error, 'Login failed');
   }
 };
 
-export const loginApi = async (credentials: LoginCredentials): Promise<LoginResponse> => {
+export const loginApi = async (credentials: LoginCredentials): Promise<ApiResponse<User>> => {
   return login(credentials.email, credentials.password);
 };
 
@@ -47,9 +48,9 @@ export const verifySessionApi = async (): Promise<void> => {
   }
 };
 
-export const getProfileApi = async (): Promise<User> => {
+export const getProfileApi = async (): Promise<ApiResponse<User>> => {
   try {
-    const response = await axiosClient.get<User>(AUTH_API_ROUTES.PROFILE);
+    const response = await axiosClient.get<ApiResponse<User>>(AUTH_API_ROUTES.PROFILE);
     return response.data;
   } catch (error: any) {
     throw toApiError(error, 'Profile fetch failed');

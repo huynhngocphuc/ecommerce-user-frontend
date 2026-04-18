@@ -1,6 +1,7 @@
 // src/pages/ProductDetailPage.tsx
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Box, Container, Typography, CircularProgress, Alert, Button } from '@mui/material';
 import { useProtectedRoute } from '../hooks/useProtectedRoute';
 import { useProducts } from '../hooks/useProducts';
@@ -12,6 +13,10 @@ const ProductDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const location = useLocation();
+  const { t } = useTranslation('product');
+  const tr = t as unknown as (key: string) => string;
+  const { t: tCommon } = useTranslation('common');
+  const trCommon = tCommon as unknown as (key: string) => string;
   const { checkAuthentication } = useProtectedRoute();
   const { addToCart } = useProducts();
   const [product, setProduct] = useState<Product | null>(null);
@@ -24,20 +29,20 @@ const ProductDetailPage: React.FC = () => {
     const fetchProduct = async () => {
       try {
         if (!id) {
-          setError('Product ID is missing');
+          setError(tr('product_id_missing'));
           return;
         }
         const data = await getProductById(id);
         setProduct(data);
       } catch (err: any) {
-        setError(err?.message || 'Failed to load product');
+        setError(err?.message || tr('failed_to_load'));
       } finally {
         setLoading(false);
       }
     };
 
     fetchProduct();
-  }, [id, checkAuthentication]);
+  }, [id, checkAuthentication, tr]);
 
   if (!checkAuthentication()) {
     return null;
@@ -54,7 +59,7 @@ const ProductDetailPage: React.FC = () => {
             onClick={() => navigate((location.state as any)?.returnTo || ROUTES.PRODUCTS)}
             sx={{ mb: 2 }}
           >
-            ← Back to Products
+            {tr('back_to_products')}
           </Button>
           {product.imageUrl && (
             <Box
@@ -77,7 +82,7 @@ const ProductDetailPage: React.FC = () => {
           </Typography>
           {product.category && (
             <Typography color="textSecondary" gutterBottom>
-              Category: {product.category}
+              {tr('category')}: {product.category}
             </Typography>
           )}
           {product.description && (
@@ -94,7 +99,7 @@ const ProductDetailPage: React.FC = () => {
               }
             }}
           >
-            Add to Cart
+            {trCommon('add_to_cart')}
           </Button>
         </Box>
       )}

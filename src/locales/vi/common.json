@@ -1,0 +1,17 @@
+{
+  "welcome": "Chào mừng",
+  "add_to_cart": "Thêm vào giỏ hàng",
+  "remove_from_cart": "Xóa khỏi giỏ hàng",
+  "quantity": "Số lượng",
+  "price": "Giá",
+  "logout": "Đăng xuất",
+  "login": "Đăng nhập",
+  "menu": "Menu",
+  "shop_name": "Girlhaf Clothing",
+  "search": "Tìm kiếm",
+  "account": "Tài khoản",
+  "nav.home": "Trang chủ",
+  "nav.shop": "Cửa hàng",
+  "nav.new-arrivals": "Hàng mới",
+  "nav.sale": "Giảm giá"
+}

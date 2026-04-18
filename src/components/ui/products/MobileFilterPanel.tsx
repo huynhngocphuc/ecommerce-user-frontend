@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Box, Typography, Checkbox, FormControlLabel, Button, Divider, IconButton, Chip, TextField } from '@mui/material';
 import { Close as CloseIcon } from '@mui/icons-material';
 import { FILTER_OPTIONS, PREDEFINED_PRICE_RANGES, SortValue } from '../../../pages/products.constants';
@@ -35,6 +36,8 @@ export const MobileFilterPanel: React.FC<MobileFilterPanelProps> = ({
   onRemoveActiveFilter,
   onClearFilters,
 }) => {
+  const { t } = useTranslation('product');
+  const tr = t as unknown as (key: string) => string;
 
   const handleApplyFilters = () => {
     // Filters are already applied in real-time
@@ -66,7 +69,7 @@ export const MobileFilterPanel: React.FC<MobileFilterPanelProps> = ({
         }}
       >
         <Typography variant="h6" sx={{ fontWeight: 600 }}>
-          Filters
+          {tr('filters')}
         </Typography>
         <IconButton
           size="small"
@@ -105,7 +108,7 @@ export const MobileFilterPanel: React.FC<MobileFilterPanelProps> = ({
           </Box>
         )}
 
-        <Typography variant="subtitle2" sx={{ marginBottom: '8px', fontWeight: 700 }}>Category</Typography>
+        <Typography variant="subtitle2" sx={{ marginBottom: '8px', fontWeight: 700 }}>{tr('category')}</Typography>
         {FILTER_OPTIONS.categories.map((category) => (
           <FormControlLabel
             key={category}
@@ -117,11 +120,11 @@ export const MobileFilterPanel: React.FC<MobileFilterPanelProps> = ({
 
         <Divider sx={{ marginBottom: '24px' }} />
 
-        <Typography variant="subtitle2" sx={{ marginBottom: '8px', fontWeight: 700 }}>Price</Typography>
+        <Typography variant="subtitle2" sx={{ marginBottom: '8px', fontWeight: 700 }}>{tr('price')}</Typography>
         {PREDEFINED_PRICE_RANGES.map((range) => (
           <Chip
             key={range.value}
-            label={range.label}
+            label={tr(`price_range.${range.value}`)}
             clickable
             onClick={() => onToggleFilterValue('priceRange', range.value)}
             color={selectedPriceRanges.includes(range.value) ? 'primary' : 'default'}
@@ -137,7 +140,7 @@ export const MobileFilterPanel: React.FC<MobileFilterPanelProps> = ({
             variant="subtitle2"
             sx={{ marginBottom: '12px', fontWeight: 600 }}
           >
-            Size
+            {tr('size')}
           </Typography>
           {FILTER_OPTIONS.sizes.map((size) => (
             <Chip
@@ -160,7 +163,7 @@ export const MobileFilterPanel: React.FC<MobileFilterPanelProps> = ({
             variant="subtitle2"
             sx={{ marginBottom: '12px', fontWeight: 600 }}
           >
-            Color
+            {tr('color')}
           </Typography>
           {FILTER_OPTIONS.colors.map((color) => (
             <FormControlLabel
@@ -182,11 +185,11 @@ export const MobileFilterPanel: React.FC<MobileFilterPanelProps> = ({
 
         <Divider sx={{ marginBottom: '24px' }} />
 
-        <Typography variant="subtitle2" sx={{ marginBottom: '8px', fontWeight: 700 }}>Brand</Typography>
+        <Typography variant="subtitle2" sx={{ marginBottom: '8px', fontWeight: 700 }}>{tr('brand')}</Typography>
         <TextField
           size="small"
           fullWidth
-          placeholder="Search brand..."
+          placeholder={tr('search_brand')}
           value={brandSearchTerm}
           onChange={(event) => onBrandSearchTermChange(event.target.value)}
           sx={{ mb: 1 }}
@@ -202,7 +205,7 @@ export const MobileFilterPanel: React.FC<MobileFilterPanelProps> = ({
 
         <Divider sx={{ marginBottom: '24px', marginTop: '8px' }} />
 
-        <Typography variant="subtitle2" sx={{ marginBottom: '8px', fontWeight: 700 }}>Style / Fit</Typography>
+        <Typography variant="subtitle2" sx={{ marginBottom: '8px', fontWeight: 700 }}>{tr('style_fit')}</Typography>
         {FILTER_OPTIONS.styles.map((style) => (
           <FormControlLabel
             key={style}
@@ -238,7 +241,7 @@ export const MobileFilterPanel: React.FC<MobileFilterPanelProps> = ({
             },
           }}
         >
-          Reset
+          {tr('reset')}
         </Button>
         <Button
           fullWidth
@@ -253,7 +256,7 @@ export const MobileFilterPanel: React.FC<MobileFilterPanelProps> = ({
             },
           }}
         >
-          Apply
+          {tr('apply')}
         </Button>
       </Box>
     </Box>

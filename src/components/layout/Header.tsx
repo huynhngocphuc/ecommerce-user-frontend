@@ -1,6 +1,7 @@
 // src/components/layout/Header.tsx
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import {
   AppBar,
   Toolbar,
@@ -21,10 +22,13 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { useAuth } from '../../hooks/useAuth';
 import { useCartCount } from '../../hooks/useCartCount';
 import CartBadge from '../ui/CartBadge';
+import LanguageSwitcher from '../LanguageSwitcher';
 import { HEADER_NAV_ITEMS, ROUTES } from '../../utils/routes';
 
 const Header: React.FC = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation('common');
+  const tr = t as unknown as (key: string) => string;
   useTheme();
   const isMobile = useMediaQuery('(max-width:767.95px)');
   const { isAuthenticated, user, logout } = useAuth();
@@ -88,7 +92,7 @@ const Header: React.FC = () => {
             />
           ) : null}
           <Typography variant="h6" sx={{ color: 'text.primary', fontWeight: 600 }}>
-            Girlhaf Clothing
+            {tr('shop_name')}
           </Typography>
         </Box>
 
@@ -102,7 +106,7 @@ const Header: React.FC = () => {
                 className="header-nav-item"
                 sx={navButtonSx}
               >
-                {item.label}
+                {tr(`nav.${item.id}`)}
               </Button>
             ))}
           </Box>
@@ -135,6 +139,7 @@ const Header: React.FC = () => {
             className="header-icon-btn"
             sx={iconButtonSx}
           />
+          <LanguageSwitcher />
           <IconButton
             aria-label={isAuthenticated ? 'Account menu' : 'Login'}
             onClick={() => (isAuthenticated ? navigate(ROUTES.PRODUCTS) : navigate(ROUTES.LOGIN))}
@@ -147,18 +152,18 @@ const Header: React.FC = () => {
 
           {!isMobile && isAuthenticated ? (
             <>
-              <Typography variant="body2" color="text.secondary" sx={{ ml: 1 }}>
+              <Typography variant="body2" color="text.secondary" sx={{ ml: 1}}>
                 {user?.name || user?.email}
               </Typography>
-              <Button color="inherit" onClick={handleLogout} sx={{ ml: 1 }}>
-                Logout
+              <Button color="inherit" onClick={handleLogout} sx={{ ml: 1, minWidth:'100px'}}>
+                {tr('logout')}
               </Button>
             </>
           ) : null}
 
           {!isMobile && !isAuthenticated ? (
-            <Button color="inherit" onClick={() => navigate(ROUTES.LOGIN)}>
-              Login
+            <Button color="inherit" onClick={() => navigate(ROUTES.LOGIN)} sx={{minWidth: '100px'}}>
+              {tr('login')}
             </Button>
           ) : null}
         </Box>
@@ -172,22 +177,22 @@ const Header: React.FC = () => {
       >
         <Box sx={{ p: 2 }}>
           <Typography variant="h6" sx={{ mb: 1.5 }}>
-            Menu
+            {tr('menu')}
           </Typography>
           <List>
             {HEADER_NAV_ITEMS.map((item) => (
               <ListItemButton key={item.id} onClick={() => handleNavigate(item.path)}>
-                <ListItemText primary={item.label} />
+                <ListItemText primary={tr(`nav.${item.id}`)} />
               </ListItemButton>
             ))}
 
             {isAuthenticated ? (
-              <ListItemButton onClick={handleLogout}>
-                <ListItemText primary="Logout" />
+              <ListItemButton onClick={handleLogout}  >
+                <ListItemText primary={tr('logout')} />
               </ListItemButton>
             ) : (
               <ListItemButton onClick={() => handleNavigate(ROUTES.LOGIN)}>
-                <ListItemText primary="Login" />
+                <ListItemText primary={tr('login')} />
               </ListItemButton>
             )}
           </List>

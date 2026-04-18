@@ -11,9 +11,11 @@ import ProductDetailPage from './pages/ProductDetailPage';
 import SalePage from './pages/SalePage';
 import { ROUTES } from './utils/routes';
 import { useAuth } from './hooks/useAuth';
+import { useLanguage } from './hooks/useLanguage';
 import { createAppTheme, resolveInitialThemeMode, resolveSystemPreferredMode } from './utils/theme';
 
 const App: React.FC = () => {
+  useLanguage();
   const { isAuthenticated, isLoading, sessionStatus, bootstrapSession } = useAuth();
   const [themeMode, setThemeMode] = React.useState(resolveInitialThemeMode);
 
