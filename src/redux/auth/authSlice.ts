@@ -14,8 +14,15 @@ const isUnauthorizedError = (error: any): boolean => {
 };
 
 const resolveErrorMessage = (error: any, fallback: string): string => {
-  return error?.message || error?.response?.data?.message || fallback;
+  return (
+    error?.errors?.[0]?.message ||
+    error?.response?.data?.errors?.[0]?.message ||
+    error?.message ||
+    error?.response?.data?.message ||
+    fallback
+  );
 };
+
 
 const initialState: AuthState = {
   user: null,
@@ -31,13 +38,12 @@ export const login = createAsyncThunk(
   'auth/login',
   async (credentials: { email: string; password: string }, { rejectWithValue }) => {
     try {
-      const data = await loginApi(credentials);
-      if (data) {
-        return data;
-      }
-
+      await loginApi(credentials);
       const profile = await getProfileApi();
-      return profile;
+      if (!profile.data) {
+        return rejectWithValue('Profile data is missing');
+      }
+      return profile.data;
     } catch (err: any) {
       return rejectWithValue(resolveErrorMessage(err, 'Login failed'));
     }
@@ -121,11 +127,11 @@ export const authSlice = createSlice({
         state.failureReason = null;
       })
       .addCase(login.fulfilled, (state, action) => {
-        console.log("🚀 ~ action:", action)
         state.isLoading = false;
-        state.user = action.payload.data;
+        state.user = action.payload;
         state.sessionStatus = 'authenticated';
         state.lastVerifiedAt = new Date().toISOString();
+
       })
       .addCase(login.rejected, (state, action) => {
         state.isLoading = false;
@@ -138,11 +144,17 @@ export const authSlice = createSlice({
       })
       .addCase(bootstrapSession.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.user = action.payload.data;
-        state.sessionStatus = 'authenticated';
-        state.lastVerifiedAt = new Date().toISOString();
-        state.error = null;
-        state.failureReason = null;
+        if (action.payload.success && action.payload.data) {
+          state.user = action.payload.data;
+          state.sessionStatus = 'authenticated';
+          state.lastVerifiedAt = new Date().toISOString();
+          state.error = null;
+          state.failureReason = null;
+        } else {
+          state.user = null;
+          state.sessionStatus = 'unauthenticated';
+          state.failureReason = action.payload.message;
+        }
       })
       .addCase(bootstrapSession.rejected, (state, action) => {
         state.isLoading = false;
@@ -155,10 +167,16 @@ export const authSlice = createSlice({
       })
       .addCase(refreshSession.fulfilled, (state, action) => {
         state.isRefreshing = false;
-        state.user = action.payload.data;
-        state.sessionStatus = 'authenticated';
-        state.lastVerifiedAt = new Date().toISOString();
-        state.error = null;
+        if (action.payload.success && action.payload.data) {
+          state.user = action.payload.data;
+          state.sessionStatus = 'authenticated';
+          state.lastVerifiedAt = new Date().toISOString();
+          state.error = null;
+        } else {
+          state.user = null;
+          state.sessionStatus = 'unauthenticated';
+          state.failureReason = action.payload.message;
+        }
       })
       .addCase(refreshSession.rejected, (state, action) => {
         state.isRefreshing = false;

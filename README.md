@@ -2,6 +2,19 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+## Prerequisites
+
+- Node.js 20 or newer
+- npm 9 or newer
+
+If you use nvm, run:
+
+```bash
+nvm use
+```
+
+This repository includes a `.nvmrc` file pinned to Node 20.
+
 ## Available Scripts
 
 In the project directory, you can run:
