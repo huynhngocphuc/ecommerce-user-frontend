@@ -2,7 +2,7 @@ const APP_ENV = process.env.REACT_APP_ENV_NAME ?? process.env.NODE_ENV ?? 'devel
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL ?? '';
 
 if (!API_BASE_URL) {
-  throw new Error('Missing REACT_APP_API_BASE_URL in environment variables.');
+  console.error('Missing REACT_APP_API_BASE_URL in environment variables.');
 }
 
 const isLocalHostName = (hostname: string): boolean => {
