@@ -1,12 +1,8 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-@import "reset";
-@import "nav-side_bar.scss";
-@import "header.scss";
-@import 'variables';
-@import 'products-page';
+@use "./variables" as *;
+@use "./reset";
+@use "./nav-side_bar";
+@use "./header";
+@use "./products-page";
 
 .products-page-container {
 	.filter-sidebar {

@@ -2,6 +2,8 @@
 // Responsive grid layout, product card styling, and filter panel behavior
 // Location: src/assets/styles/products-page.scss
 
+@use './variables' as *;
+
 // Layout variables
 $sidebar-width: 240px;
 $sidebar-width-max: 280px;
