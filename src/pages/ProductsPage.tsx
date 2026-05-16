@@ -9,7 +9,7 @@ import { useProductFilters } from '../hooks/useProductFilters';
 import { ProductGrid } from '../components/ui/products/ProductGrid';
 import { FilterSidebar } from '../components/ui/products/FilterSidebar';
 import { MobileFilterPanel } from '../components/ui/products/MobileFilterPanel';
-import { ProductDetailModal } from '../components/ui/products/ProductDetailModal';
+import ProductModal from '../components/product-modal';
 import { mapProductsToListItemViews, filterValidListItems, mapActiveFiltersToChipViews } from './products.mappers';
 import { GRID_CONTAINER } from './products.constants';
 import { SORT_OPTIONS } from './products.constants';
@@ -121,15 +121,14 @@ const ProductsPage: React.FC = () => {
   );
 
   const handleAddToCartFromModal = React.useCallback(
-    (selection: { selectedSize?: string; selectedColor?: string }) => {
+    (variantId: string, quantity: number) => {
       if (!modalDetailState.product) {
         return;
       }
 
       addToCart({
         ...modalDetailState.product,
-        selectedSize: selection.selectedSize,
-        selectedColor: selection.selectedColor,
+        id: variantId || modalDetailState.product.id,
       });
     },
     [addToCart, modalDetailState.product]
@@ -303,15 +302,53 @@ const ProductsPage: React.FC = () => {
         </>
       )}
 
-      <ProductDetailModal
-        open={isProductModalOpen}
-        product={modalDetailState.product}
-        loading={modalDetailState.loading}
-        error={modalDetailState.error}
-        onClose={handleCloseProductDetail}
-        onOpenFullDetail={handleOpenFullDetail}
-        onAddToCart={handleAddToCartFromModal}
-      />
+      {(() => {
+        const buildVariants = () => {
+          if (!modalDetailState.product) return [];
+          const { sizeOptions = [], colorOptions = [] } = modalDetailState.product;
+          
+          if (sizeOptions.length === 0 && colorOptions.length === 0) return [];
+          
+          const variants = [];
+          const sizes = sizeOptions.length > 0 ? sizeOptions : [{ value: 'default', label: 'Default' }];
+          const colors = colorOptions.length > 0 ? colorOptions : [{ value: 'default', label: 'Default' }];
+          
+          for (const size of sizes) {
+            for (const color of colors) {
+              variants.push({
+                id: `${size.value}-${color.value}`,
+                size: size.value !== 'default' ? size.value : undefined,
+                color: color.value !== 'default' ? color.value : undefined,
+                available: true,
+              });
+            }
+          }
+          return variants;
+        };
+        
+        return (
+          <ProductModal
+            open={isProductModalOpen}
+            product={modalDetailState.product ? {
+              id: modalDetailState.product.id || '',
+              title: modalDetailState.product.name || '',
+              shortDescription: modalDetailState.product.description,
+              price: modalDetailState.product.price || 0,
+              images: (modalDetailState.product.media || []).map((m: any) => ({
+                id: m.url,
+                url: m.url,
+                altText: m.alt,
+                isPrimary: m.isPrimary
+              })),
+              variants: buildVariants(),
+              sizeOptions: modalDetailState.product.sizeOptions || [],
+              colorOptions: modalDetailState.product.colorOptions || [],
+            } : { id: '', title: '', price: 0, images: [], variants: [], sizeOptions: [], colorOptions: [] }}
+            onClose={handleCloseProductDetail}
+            onAddToCart={handleAddToCartFromModal}
+          />
+        );
+      })()}
     </Box>
   );
 };
